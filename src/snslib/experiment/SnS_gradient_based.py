@@ -4,24 +4,24 @@ import numpy as np
 from numpy.typing import NDArray
 import torch
 import torchjd
-from experiment.utils.args import ExperimentArgParams
-from experiment.utils.misc import ref_code_recovery
-from experiment.utils.parsing import parse_net_loading, parse_recording, parse_reference_info, parse_signature
-from metaexperiment.distance_analysis import DEVICE
-from metaexperiment.metaexp_functs import NAT_STAT_AGGREGATOR, get_df_summary
-from pxdream.generator import DeePSiMGenerator
-from pxdream.subject import InSilicoSubject, TorchNetworkSubject
-from pxdream.utils.io_ import load_pickle
-from pxdream.utils.logger import Logger, LoguruLogger, SilentLogger
-from pxdream.utils.message import GDSnSMessage
-from pxdream.utils.misc import deep_get
-from pxdream.utils.parameters import ArgParams, ParamConfig
-from pxdream.utils.types import States, Stimuli
-from pxdream.utils.probe               import RecordingProbe_Grad
+from snslib.experiment.utils.args import ExperimentArgParams
+from snslib.experiment.utils.misc import ref_code_recovery
+from snslib.experiment.utils.parsing import parse_net_loading, parse_recording, parse_reference_info, parse_signature
+from snslib.metaexperiment.distance_analysis import DEVICE
+from snslib.metaexperiment.metaexp_functs import NAT_STAT_AGGREGATOR, get_df_summary
+from snslib.core.generator import DeePSiMGenerator
+from snslib.core.subject import InSilicoSubject, TorchNetworkSubject
+from snslib.core.utils.io_ import load_pickle
+from snslib.core.utils.logger import Logger, LoguruLogger, SilentLogger
+from snslib.core.utils.message import GDSnSMessage
+from snslib.core.utils.misc import deep_get
+from snslib.core.utils.parameters import ArgParams, ParamConfig
+from snslib.core.utils.types import States, Stimuli
+from snslib.core.utils.probe               import RecordingProbe_Grad
 from torchjd.aggregation import UPGrad
 import torch.optim as optim
 import torchvision.transforms as transforms
-from pxdream.experiment import Experiment, GradientBasedExperimentState, MultiExperiment
+from snslib.core.experiment import Experiment, GradientBasedExperimentState, MultiExperiment
 
 class SnS_gradient_based(Experiment):
     

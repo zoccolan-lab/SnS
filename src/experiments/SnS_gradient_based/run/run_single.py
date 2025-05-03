@@ -1,6 +1,6 @@
-from experiment.SnS_gradient_based.args import ARGS
+from experiments.SnS_gradient_based.args import ARGS
 from experiment.utils.misc import run_single
-from experiment.SnS_gradient_based.SnS_gradient_based import SnS_gradient_based
+from src.snslib.experiment.SnS_gradient_based import SnS_gradient_based
 
 #matplotlib.use('TKAgg')
 

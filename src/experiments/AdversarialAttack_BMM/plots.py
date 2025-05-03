@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 from scipy.interpolate import UnivariateSpline
 
-from pxdream.scorer import ParetoReferencePairDistanceScorer
+from src.snslib.core.scorer import ParetoReferencePairDistanceScorer
 
 
 plt.rcParams.update({

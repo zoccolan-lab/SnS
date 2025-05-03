@@ -1,3 +1,4 @@
+import json
 import math
 from os import path
 import os
@@ -13,13 +14,14 @@ from matplotlib import cm, pyplot as plt
 from matplotlib.axes import Axes
 from torchvision.transforms.functional import to_pil_image
 
-from analysis.utils.misc import load_imagenet
-from pxdream.generator import DeePSiMGenerator, DeePSiMVariant, Generator, DeePSiMVariant
-from pxdream.utils.misc import default, overwrite_dict
-from pxdream.utils.logger import Logger, SilentLogger
-from pxdream.utils.dataset import ExperimentDataset
-from pxdream.utils.misc import SEM, default
-from pxdream.utils.types import Codes, Fitness, Stimuli
+#from analysis.utils.misc import load_imagenet
+
+from src.snslib.core.generator import DeePSiMGenerator, DeePSiMVariant, Generator, DeePSiMVariant
+from src.snslib.core.utils.misc import default, overwrite_dict
+from src.snslib.core.utils.logger import Logger, SilentLogger
+from src.snslib.core.utils.dataset import ExperimentDataset
+from src.snslib.core.utils.misc import SEM, default
+from src.snslib.core.utils.types import Codes, Fitness, Stimuli
 
 # --- DEFAULT PLOTTING PARAMETERS ----
 
@@ -723,6 +725,34 @@ def save_stimuli_samples(
         
         fig.savefig(out_fp)
 
+def _load_imagenet_labels(json_path: str, logger: Logger = SilentLogger()) -> Dict[int, str]:
+    """
+    Loads ImageNet labels from the standard JSON file format.
+
+    :param json_path: Path to the imagenet_class_index.json file.
+    :type json_path: str
+    :param logger: Logger for logging messages.
+    :type logger: Logger
+    :return: A dictionary mapping class index (int) to class name (str).
+    :rtype: Dict[int, str]
+    """
+    logger.info(f"Loading ImageNet labels from {json_path}")
+    try:
+        with open(json_path, 'r') as f:
+            class_idx = json.load(f)
+        
+        # The JSON maps string indices to [code, name] lists.
+        # We want a map from integer index to name.
+        labels = {int(k): v[1] for k, v in class_idx.items()}
+        logger.info(f"Successfully loaded {len(labels)} ImageNet labels.")
+        return labels
+    except FileNotFoundError:
+        logger.error(f"ImageNet labels file not found at {json_path}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading ImageNet labels from {json_path}: {e}")
+        raise
+
 
 def save_best_stimulus_per_variant(
     neurons_variant_codes: Dict[str, Dict[DeePSiMVariant, Tuple[Codes, Fitness]]],
@@ -734,7 +764,13 @@ def save_best_stimulus_per_variant(
     variants = list(list(neurons_variant_codes.values())[0].keys())
     
     # Load imagenet labels
-    inet, _ = load_imagenet(logger=logger)
+    #inet, _ = load_imagenet(logger=logger)
+    
+    
+    # NOTE: The path to the imagenet labels file must be defined. 
+    imagenet_labels_path = 'imagenet_class_index.json'
+    inet = _load_imagenet_labels(imagenet_labels_path, logger=logger)
+
     
     # Load each generator per variant
     generators = {

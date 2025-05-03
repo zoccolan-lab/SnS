@@ -4,9 +4,9 @@ TODO Experiment description
 
 import matplotlib
 
-from experiment.MaximizeActivity.args import ARGS
-from experiment.utils.misc import run_single
-from experiment.MaximizeActivity.maximize_activity import MaximizeActivityExperiment
+from experiments.MaximizeActivity.args import ARGS
+from src.snslib.experiment.utils.misc import run_single
+from src.snslib.experiment.maximize_activity import MaximizeActivityExperiment
 
 #matplotlib.use('TKAgg')
 

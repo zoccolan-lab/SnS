@@ -1,5 +1,5 @@
-from experiment.utils.args import DATASET, NATURAL_RECORDINGS, OUT_DIR, WEIGHTS, REFERENCES, CUSTOM_WEIGHTS, ExperimentArgParams
-from pxdream.utils.parameters import ArgParams, ParamConfig
+from src.snslib.experiment.utils.args import DATASET, NATURAL_RECORDINGS, OUT_DIR, WEIGHTS, REFERENCES, CUSTOM_WEIGHTS, ExperimentArgParams
+from src.snslib.core.utils.parameters import ArgParams, ParamConfig
 import os
 
 ARGS: ParamConfig = {

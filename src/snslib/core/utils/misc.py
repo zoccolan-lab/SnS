@@ -27,7 +27,7 @@ from pandas import DataFrame
 from numpy.typing import NDArray
 import pandas as pd
 
-from pxdream.utils.logger import Logger, SilentLogger
+from .logger import Logger, SilentLogger
 
 
 

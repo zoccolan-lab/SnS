@@ -2,9 +2,9 @@
 TODO Experiment description
 '''
 
-from experiment.SnS_gradient_based.args import ARGS
-from experiment.utils.misc import run_multi
-from experiment.SnS_gradient_based.SnS_gradient_based import SnS_gradient_based, SnSGDMultiExperiment
+from experiments.SnS_gradient_based.args import ARGS
+from src.snslib.experiment.utils.misc import run_multi
+from src.snslib.experiment.SnS_gradient_based import SnS_gradient_based, SnSGDMultiExperiment
 
 if __name__ == '__main__': run_multi(
     args_conf=ARGS, 

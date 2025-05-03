@@ -1,8 +1,8 @@
 
 
-from experiment.MaximizeActivity.args import ARGS
-from experiment.utils.misc import run_multi
-from experiment.MaximizeActivity.maximize_activity import MaximizeActivityExperiment, OptParamsVariantMultiExperiment
+from experiments.MaximizeActivity.args import ARGS
+from src.snslib.experiment.utils.misc import run_multi
+from src.snslib.experiment.maximize_activity import MaximizeActivityExperiment, OptParamsVariantMultiExperiment
 
 if __name__ == '__main__':
     run_multi(

@@ -14,8 +14,7 @@ from torch import nn
 from torch.utils.hooks import RemovableHandle
 import torch.nn.functional as F
 
-from pxdream.utils.torch_net_load_functs import torch_load
-
+from .utils.torch_net_load_functs import torch_load
 from .utils.logger import Logger, SilentLogger
 from .utils.probe import RecordingProbe_Grad, SetterProbe, SilicoProbe,RecordingProbe
 from .utils.misc import InputLayer, default, device, unpack, replace_inplace

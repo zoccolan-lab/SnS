@@ -18,7 +18,7 @@ from torchvision.utils import make_grid
 from torchvision.transforms.functional import to_pil_image
 from PIL import Image, ImageDraw, ImageFont
 
-from experiment.AdversarialAttack_BMM.plots import avg_spline
+from src.experiments.AdversarialAttack_BMM.plots import avg_spline
 from datetime import datetime
 
 

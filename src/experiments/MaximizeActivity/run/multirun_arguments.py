@@ -6,12 +6,12 @@ from typing import List, Set, Tuple
 
 import numpy as np
 
-from experiment.utils.misc import ref_code_recovery
-from pxdream.utils.io_ import load_pickle
-from pxdream.utils.misc import copy_exec
-from pxdream.utils.parameters import ArgParams
-from experiment.utils.args import REFERENCES, ExperimentArgParams
-from pxdream.subject import TorchNetworkSubject
+from src.snslib.experiment.utils.misc import ref_code_recovery
+from src.snslib.core.utils.io_ import load_pickle
+from src.snslib.core.utils.misc import copy_exec
+from src.snslib.core.utils.parameters import ArgParams
+from src.snslib.experiment.utils.args import REFERENCES, ExperimentArgParams
+from src.snslib.core.subject import TorchNetworkSubject
 
 
 def generate_log_numbers(N, M): return list(sorted(list(set([int(a) for a in np.logspace(0, np.log10(M), N)]))))

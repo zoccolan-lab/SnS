@@ -15,24 +15,24 @@ from torchvision.transforms.functional import to_pil_image
 from torchvision import transforms
 from scipy.spatial.distance import pdist
 
-from experiment.AdversarialAttack_BMM.plots import BMM_scatter_plot
+from src.experiments.AdversarialAttack_BMM.plots import BMM_scatter_plot
 from metaexperiment.metaexp_functs import get_df_summary
-from pxdream.experiment                import ParetoExperimentState, ZdreamExperiment
-from pxdream.generator                 import Generator, DeePSiMGenerator
-from pxdream.optimizer                 import CMAESOptimizer, GeneticOptimizer, HybridOptimizer, Optimizer
-from pxdream.scorer                    import Scorer, ParetoReferencePairDistanceScorer, _MetricKind
-from pxdream.subject                   import InSilicoSubject, TorchNetworkSubject
-from pxdream.utils.dataset             import ExperimentDataset, MiniImageNet, NaturalStimuliLoader, RandomImageDataset
-from pxdream.utils.io_ import load_pickle
-from pxdream.utils.logger              import DisplayScreen, Logger, LoguruLogger
-from pxdream.utils.message             import ParetoMessage, ZdreamMessage, checkpoint
-from pxdream.utils.misc                import aggregate_matrix, concatenate_images, deep_get, device, resize_image_tensor
-from pxdream.utils.parameters          import ArgParams, ParamConfig
-from pxdream.utils.probe               import RecordingProbe
-from pxdream.utils.types               import Codes, Stimuli, Fitness, States
-from experiment.utils.args            import  ExperimentArgParams, WEIGHTS
-from experiment.utils.parsing         import parse_boolean_string, parse_bounds, parse_net_loading, parse_recording, parse_reference_info, parse_scoring, parse_signature
-from experiment.utils.misc            import BaseZdreamMultiExperiment, make_dir, ref_code_recovery
+from snslib.core.experiment                import ParetoExperimentState, ZdreamExperiment
+from snslib.core.generator                 import Generator, DeePSiMGenerator
+from snslib.core.optimizer                 import CMAESOptimizer, GeneticOptimizer, HybridOptimizer, Optimizer
+from snslib.core.scorer                    import Scorer, ParetoReferencePairDistanceScorer, _MetricKind
+from snslib.core.subject                   import InSilicoSubject, TorchNetworkSubject
+from snslib.core.utils.dataset             import ExperimentDataset, MiniImageNet, NaturalStimuliLoader, RandomImageDataset
+from snslib.core.utils.io_ import load_pickle
+from snslib.core.utils.logger              import DisplayScreen, Logger, LoguruLogger
+from snslib.core.utils.message             import ParetoMessage, ZdreamMessage, checkpoint
+from snslib.core.utils.misc                import aggregate_matrix, concatenate_images, deep_get, device, resize_image_tensor
+from snslib.core.utils.parameters          import ArgParams, ParamConfig
+from snslib.core.utils.probe               import RecordingProbe
+from snslib.core.utils.types               import Codes, Stimuli, Fitness, States
+from snslib.experiment.utils.args            import  ExperimentArgParams, WEIGHTS
+from snslib.experiment.utils.parsing         import parse_boolean_string, parse_bounds, parse_net_loading, parse_recording, parse_reference_info, parse_scoring, parse_signature
+from snslib.experiment.utils.misc            import BaseZdreamMultiExperiment, make_dir, ref_code_recovery
 
 
 NAT_STAT_AGGREGATOR = {

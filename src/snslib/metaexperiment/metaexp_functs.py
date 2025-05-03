@@ -5,11 +5,11 @@ from typing import Any, Dict
 import numpy as np
 import pandas as pd
 import torch
-from experiment.utils.args import NATURAL_RECORDINGS, WEIGHTS
-from experiment.utils.misc import ref_code_recovery
-from pxdream.generator import DeePSiMGenerator
-from pxdream.utils.io_ import load_pickle
-from pxdream.utils.misc import aggregate_matrix, deep_get, resize_image_tensor
+from snslib.experiment.utils.args import NATURAL_RECORDINGS, WEIGHTS
+from snslib.experiment.utils.misc import ref_code_recovery
+from snslib.core.generator import DeePSiMGenerator
+from snslib.core.utils.io_ import load_pickle
+from snslib.core.utils.misc import aggregate_matrix, deep_get, resize_image_tensor
 
 NAT_STAT_AGGREGATOR = {
     'max': partial(aggregate_matrix, row_aggregator = partial(np.max, axis = 1)),

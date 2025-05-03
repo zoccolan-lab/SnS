@@ -1,7 +1,7 @@
-from experiment.utils.args import CUSTOM_WEIGHTS, DATASET, OUT_DIR, ExperimentArgParams
-from pxdream.utils.io_ import load_pickle
-from pxdream.utils.misc import deep_get
-from pxdream.utils.parameters import ArgParams, ParamConfig
+from src.snslib.experiment.utils.args import CUSTOM_WEIGHTS, DATASET, OUT_DIR, ExperimentArgParams
+from src.snslib.core.utils.io_ import load_pickle
+from src.snslib.core.utils.misc import deep_get
+from src.snslib.core.utils.parameters import ArgParams, ParamConfig
 
 REF_REC = load_pickle('/home/ltausani/Desktop/Zout/MaximizeActivity/08425_references_rnet50_robust__01conv01/data.pkl')
 REC_LY = '56_linear_01'

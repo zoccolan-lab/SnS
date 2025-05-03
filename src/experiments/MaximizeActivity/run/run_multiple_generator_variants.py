@@ -3,9 +3,9 @@ TODO Experiment description
 '''
 
 
-from experiment.MaximizeActivity.args import ARGS
-from experiment.utils.misc import run_multi
-from experiment.MaximizeActivity.maximize_activity import MaximizeActivityExperiment, GeneratorVariantMultiExperiment
+from experiments.MaximizeActivity.args import ARGS
+from src.snslib.experiment.utils.misc import run_multi
+from src.snslib.experiment.maximize_activity import MaximizeActivityExperiment, GeneratorVariantMultiExperiment
 
 if __name__ == '__main__': run_multi(
     args_conf=ARGS, 

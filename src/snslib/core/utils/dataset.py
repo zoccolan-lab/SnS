@@ -20,10 +20,10 @@ from PIL import Image
 from typing import Callable, Dict, List, Tuple, cast
 from torch.utils.data import DataLoader
 
-from pxdream.utils.logger import Logger, SilentLogger
-from pxdream.utils.io_ import read_json, read_txt
-from pxdream.utils.types import Mask, Stimuli
-from pxdream.utils.misc import device
+from .logger import Logger, SilentLogger
+from .io_ import read_json, read_txt
+from .types import Mask, Stimuli
+from .misc import device
 
 class NaturalStimuliLoader:
     '''

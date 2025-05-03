@@ -3,21 +3,21 @@ import ast
 from typing import Any, Dict, List
 
 import numpy as np
-from pxdream.utils.probe import RecordingProbe
-from pxdream.utils.torch_net_load_functs import madryLab_robust_load, robustBench_load, torch_load
+from snslib.core.utils.probe import RecordingProbe
+from snslib.core.utils.torch_net_load_functs import madryLab_robust_load, robustBench_load, torch_load
 import torch
 from PIL import Image
 from scipy.spatial.distance import euclidean
 from torchvision import transforms
 import matplotlib.pyplot as plt
 
-from experiment.utils.args import CUSTOM_WEIGHTS, NATURAL_RECORDINGS, REFERENCES, WEIGHTS
+from snslib.experiment.utils.args import CUSTOM_WEIGHTS, NATURAL_RECORDINGS, REFERENCES, WEIGHTS
 from metaexperiment.distance_analysis import DEVICE
-from pxdream.utils.io_ import load_pickle
-from experiment.utils.misc import ref_code_recovery
-from pxdream.subject import TorchNetworkSubject
-from pxdream.generator import DeePSiMGenerator
-from pxdream.utils.misc import deep_get
+from snslib.core.utils.io_ import load_pickle
+from snslib.experiment.utils.misc import ref_code_recovery
+from snslib.core.subject import TorchNetworkSubject
+from snslib.core.generator import DeePSiMGenerator
+from snslib.core.utils.misc import deep_get
 
 def build_subject_and_generator(label: str):
     """

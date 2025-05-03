@@ -20,8 +20,8 @@ import numpy as np
 from numpy.typing import NDArray
 from rich.progress import Progress
 
-from pxdream.utils.parameters import ArgParam, ArgParams, ParamConfig, Parameter
-from pxdream.utils.dataset import NaturalStimuliLoader
+from .utils.parameters import ArgParam, ArgParams, ParamConfig, Parameter
+from .utils.dataset import NaturalStimuliLoader
 
 from .utils.logger import DisplayScreen, Logger, SilentLogger
 from .generator import Generator

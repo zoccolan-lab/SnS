@@ -18,8 +18,7 @@ from torch.optim import AdamW
 from einops import rearrange
 from einops.layers.torch import Rearrange
 
-from pxdream.utils.logger import Logger, SilentLogger
-
+from .utils.logger import Logger, SilentLogger
 from .utils.types import Stimuli
 from .utils.types import Codes
 from .utils.misc import default, device

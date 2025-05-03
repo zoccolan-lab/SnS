@@ -11,22 +11,22 @@ from pandas       import DataFrame
 from PIL          import Image
 from torchvision.transforms.functional import to_pil_image
 
-from pxdream.experiment                import ZdreamExperiment
-from pxdream.generator                 import Generator, DeePSiMGenerator
-from pxdream.optimizer                 import CMAESOptimizer, GeneticOptimizer, Optimizer
-from pxdream.scorer                    import ActivityScorer, Scorer
-from pxdream.subject                   import InSilicoSubject, TorchNetworkSubject
-from pxdream.utils.dataset             import ExperimentDataset, MiniImageNet, NaturalStimuliLoader, RandomImageDataset
-from pxdream.utils.logger              import DisplayScreen, Logger, LoguruLogger
-from pxdream.utils.message             import ZdreamMessage
-from pxdream.utils.misc                import concatenate_images, device
-from pxdream.utils.parameters          import ArgParams, ParamConfig
-from pxdream.utils.probe               import RecordingProbe
-from pxdream.utils.types               import Codes, ScoringUnits, Stimuli, Fitness, States
-from experiment.MaximizeActivity.plot import multiexp_lineplot, plot_optimizing_units, plot_scores, plot_scores_by_label, save_best_stimulus_per_variant, save_stimuli_samples
-from experiment.utils.args            import ExperimentArgParams
-from experiment.utils.parsing         import parse_boolean_string, parse_net_loading, parse_recording, parse_scoring
-from experiment.utils.misc            import BaseZdreamMultiExperiment, make_dir
+from snslib.core.experiment                import ZdreamExperiment
+from snslib.core.generator                 import Generator, DeePSiMGenerator
+from snslib.core.optimizer                 import CMAESOptimizer, GeneticOptimizer, Optimizer
+from snslib.core.scorer                    import ActivityScorer, Scorer
+from snslib.core.subject                   import InSilicoSubject, TorchNetworkSubject
+from snslib.core.utils.dataset             import ExperimentDataset, MiniImageNet, NaturalStimuliLoader, RandomImageDataset
+from snslib.core.utils.logger              import DisplayScreen, Logger, LoguruLogger
+from snslib.core.utils.message             import ZdreamMessage
+from snslib.core.utils.misc                import concatenate_images, device
+from snslib.core.utils.parameters          import ArgParams, ParamConfig
+from snslib.core.utils.probe               import RecordingProbe
+from snslib.core.utils.types               import Codes, ScoringUnits, Stimuli, Fitness, States
+from src.experiments.MaximizeActivity.plot import multiexp_lineplot, plot_optimizing_units, plot_scores, plot_scores_by_label, save_best_stimulus_per_variant, save_stimuli_samples
+from snslib.experiment.utils.args            import ExperimentArgParams
+from snslib.experiment.utils.parsing         import parse_boolean_string, parse_net_loading, parse_recording, parse_scoring
+from snslib.experiment.utils.misc            import BaseZdreamMultiExperiment, make_dir
 
 class MaximizeActivityExperiment(ZdreamExperiment):
 

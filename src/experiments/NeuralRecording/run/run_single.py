@@ -2,9 +2,9 @@
 TODO Experiment description
 '''
 
-from experiment.utils.misc import run_single
-from experiment.NeuralRecording.args import ARGS
-from experiment.NeuralRecording.neural_recording import NeuralRecordingExperiment
+from src.snslib.experiment.utils.misc import run_single
+from experiments.NeuralRecording.args import ARGS
+from src.snslib.experiment.neural_recording import NeuralRecordingExperiment
 
 
 if __name__ == '__main__':

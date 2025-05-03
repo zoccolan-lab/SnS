@@ -9,12 +9,12 @@ from pathlib import Path
 import pprint
 import argparse
 
-from experiment.AdversarialAttack_BMM.plots import pf1_fromPKL, plot_metaexp_p1
+from src.experiments.AdversarialAttack_BMM.plots import pf1_fromPKL, plot_metaexp_p1
 from metaexperiment.metaexp_functs import get_df_summary
-from pxdream.utils.io_ import load_pickle, read_json
+from snslib.core.utils.io_ import load_pickle, read_json
 from tqdm import tqdm
 
-from pxdream.utils.misc import get_max_depth
+from snslib.core.utils.misc import get_max_depth
 
 HYPERPARAMS_FP = '/home/ltausani/Documents/GitHub/ZXDREAM/metaexperiment/hyperparams_meta_an.json'
 def agg_stats(x: pd.Series) -> dict:

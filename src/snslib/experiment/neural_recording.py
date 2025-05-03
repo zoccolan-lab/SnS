@@ -4,16 +4,16 @@ from typing import Any, Dict, List, Tuple, cast
 import numpy as np
 from torch.utils.data import Dataset
 
-from experiment.utils.args import ExperimentArgParams
-from experiment.utils.parsing import parse_int_list, parse_net_loading, parse_recording
-from pxdream.experiment import Experiment
-from pxdream.utils.logger import Logger, LoguruLogger, SilentLogger
-from pxdream.subject import InSilicoSubject, TorchNetworkSubject
-from pxdream.utils.parameters import ArgParam, ArgParams, ParamConfig
-from pxdream.utils.probe import RecordingProbe
-from pxdream.utils.dataset import MiniImageNet
-from pxdream.utils.misc import device
-from pxdream.utils.message import Message
+from snslib.experiment.utils.args import ExperimentArgParams
+from snslib.experiment.utils.parsing import parse_int_list, parse_net_loading, parse_recording
+from snslib.core.experiment import Experiment
+from snslib.core.utils.logger import Logger, LoguruLogger, SilentLogger
+from snslib.core.subject import InSilicoSubject, TorchNetworkSubject
+from snslib.core.utils.parameters import ArgParam, ArgParams, ParamConfig
+from snslib.core.utils.probe import RecordingProbe
+from snslib.core.utils.dataset import MiniImageNet
+from snslib.core.utils.misc import device
+from snslib.core.utils.message import Message
 
 class NeuralRecordingExperiment(Experiment):
     

@@ -4,13 +4,13 @@ from typing import List, Tuple
 
 import numpy as np
 
-from experiment.utils.args import REFERENCES, ExperimentArgParams
-from experiment.utils.misc import ref_code_recovery
-from pxdream.subject import TorchNetworkSubject
-from pxdream.utils.io_ import load_pickle
-from pxdream.utils.misc       import copy_exec
-from pxdream.utils.parameters import ArgParams
-from experiment.utils.parsing import get_rnd
+from src.snslib.experiment.utils.args import REFERENCES, ExperimentArgParams
+from src.snslib.experiment.utils.misc import ref_code_recovery
+from src.snslib.core.subject import TorchNetworkSubject
+from src.snslib.core.utils.io_ import load_pickle
+from src.snslib.core.utils.misc       import copy_exec
+from src.snslib.core.utils.parameters import ArgParams
+from src.snslib.experiment.utils.parsing import get_rnd
 
 
 SPACE_TXT = '/home/ltausani/Documents/GitHub/ZXDREAM/experiment/AdversarialAttack_BMM/run/low_spaces.txt'

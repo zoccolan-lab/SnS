@@ -13,22 +13,22 @@ from scipy.spatial.distance import cdist, pdist, squareform
 import torch
 import torchvision.transforms as T
 
-from experiment.utils.args import CUSTOM_WEIGHTS, DATASET, REFERENCES, WEIGHTS
-from experiment.utils.misc import ref_code_recovery
+from snslib.experiment.utils.args import CUSTOM_WEIGHTS, DATASET, REFERENCES, WEIGHTS
+from snslib.experiment.utils.misc import ref_code_recovery
 from metaexperiment.metaexp import SnS_metadata
 from metaexperiment.plots import pad_tensor_lists, vertical_stack_images, wrap_text
-from pxdream.generator import DeePSiMGenerator
-from pxdream.subject import TorchNetworkSubject
-from pxdream.utils.dataset import MiniImageNet
-from pxdream.utils.io_ import load_pickle, read_json, save_json
-from pxdream.utils.misc import aggregate_df
-from pxdream.utils.probe import RecordingProbe
-from pxdream.utils.torch_net_load_functs import NET_LOAD_DICT, madryLab_robust_load, robustBench_load, torch_load
+from snslib.core.generator import DeePSiMGenerator
+from snslib.core.subject import TorchNetworkSubject
+from snslib.core.utils.dataset import MiniImageNet
+from snslib.core.utils.io_ import load_pickle, read_json, save_json
+from snslib.core.utils.misc import aggregate_df
+from snslib.core.utils.probe import RecordingProbe
+from snslib.core.utils.torch_net_load_functs import NET_LOAD_DICT, madryLab_robust_load, robustBench_load, torch_load
 from torch.utils.data import DataLoader
 import argparse
 import seaborn as sns
 
-from pxdream.utils.types import States
+from snslib.core.utils.types import States
 
 DEVICE ='cuda' if torch.cuda.is_available() else 'cpu'
 

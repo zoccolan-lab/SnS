@@ -12,11 +12,11 @@ from typing import Any, Callable, Dict, Iterable, List, Tuple, Union
 import numpy as np
 from numpy.typing import NDArray
 import torch
-from pxdream.scorer import ParetoReferencePairDistanceScorer
+from snslib.core.scorer import ParetoReferencePairDistanceScorer
 
 from .misc import SEM, defaultdict_list
 from .types import Codes, Mask, RFBox, RecordingUnits, ScoringUnits, Fitness, States
-from pxdream.utils.parameters import ParamConfig
+from snslib.core.utils.parameters import ParamConfig
 
 @dataclass
 class Message:
