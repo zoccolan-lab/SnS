@@ -4,9 +4,9 @@ TODO Experiment description
 
 import matplotlib
 
-from experiments.AdversarialAttack_BMM.args import ARGS
+from experiments.Stretch_and_Squeeze.args import ARGS
 from src.snslib.experiment.utils.misc import run_single
-from src.snslib.experiment.adversarial_attack_max import StretchSqueezeExperiment
+from src.snslib.experiment.stretch_and_squeeze import StretchSqueezeExperiment
 
 #matplotlib.use('TKAgg')
 
