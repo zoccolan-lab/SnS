@@ -14,8 +14,8 @@ from numpy.typing import NDArray
 import torch
 from snslib.core.scorer import ParetoReferencePairDistanceScorer
 
-from .misc import SEM, defaultdict_list
-from .types import Codes, Mask, RFBox, RecordingUnits, ScoringUnits, Fitness, States
+from snslib.core.utils.misc import SEM, defaultdict_list
+from snslib.core.utils.types import Codes, Mask, RFBox, RecordingUnits, ScoringUnits, Fitness, States
 from snslib.core.utils.parameters import ParamConfig
 
 @dataclass

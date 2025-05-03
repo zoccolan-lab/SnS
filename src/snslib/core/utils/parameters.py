@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Type
 
-from .io_ import save_json
+from snslib.core.utils.io_ import save_json
 
 Parameter      = str | int | float | bool
 ''' Possible command line argument types. '''

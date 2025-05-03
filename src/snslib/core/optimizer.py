@@ -13,8 +13,8 @@ from numpy.typing import NDArray
 from scipy.special import softmax
 from cma import CMAEvolutionStrategy
 
-from .utils.types import Codes, Fitness
-from .utils.misc import default
+from snslib.core.utils.types import Codes, Fitness
+from snslib.core.utils.misc import default
 
 RandomDistribution = Literal['normal', 'gumbel', 'laplace', 'logistic']
 ''' 

@@ -8,7 +8,7 @@ from robustness.model_utils import make_and_restore_model
 
 from robustbench import load_model
 
-from .misc import InputLayer
+from snslib.core.utils.misc import InputLayer
 from snslib.experiment.utils.args import DATASET
 
 def torch_load(net_sbj: 'TorchNetworkSubject', weights_path: str = '', pretrained: bool = True):

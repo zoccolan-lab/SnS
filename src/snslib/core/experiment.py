@@ -20,18 +20,18 @@ import numpy as np
 from numpy.typing import NDArray
 from rich.progress import Progress
 
-from .utils.parameters import ArgParam, ArgParams, ParamConfig, Parameter
-from .utils.dataset import NaturalStimuliLoader
+from snslib.core.utils.parameters import ArgParam, ArgParams, ParamConfig, Parameter
+from snslib.core.utils.dataset import NaturalStimuliLoader
 
-from .utils.logger import DisplayScreen, Logger, SilentLogger
-from .generator import Generator
-from .utils.message import Message, ParetoMessage, ZdreamMessage
-from .optimizer import Optimizer
-from .scorer import Scorer
-from .subject import InSilicoSubject
-from .utils.io_ import read_json, save_json, store_pickle, to_regular_dict
-from .utils.types import Codes, Stimuli, Fitness, States
-from .utils.misc import flatten_dict, load_npy_npz, overwrite_dict, stringfy_time
+from snslib.core.utils.logger import DisplayScreen, Logger, SilentLogger
+from snslib.core.generator import Generator
+from snslib.core.utils.message import Message, ParetoMessage, ZdreamMessage
+from snslib.core.optimizer import Optimizer
+from snslib.core.scorer import Scorer
+from snslib.core.subject import InSilicoSubject
+from snslib.core.utils.io_ import read_json, save_json, store_pickle, to_regular_dict
+from snslib.core.utils.types import Codes, Stimuli, Fitness, States
+from snslib.core.utils.misc import flatten_dict, load_npy_npz, overwrite_dict, stringfy_time
 
 
 # --- EXPERIMENT ABSTRACT CLASS ---

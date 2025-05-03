@@ -25,16 +25,16 @@ from rich.console import Console
 from PIL import Image, ImageTk
 import loguru
 
-from .parameters import ArgParams, ParamConfig
+from snslib.core.utils.parameters import ArgParams, ParamConfig
 
-from .io_   import rmdir
+
 import os
 from os import path
 import logging
 from typing import Callable, Dict, List
 from PIL import Image
-import loguru
-from .io_   import rmdir
+
+from snslib.core.utils.io_   import rmdir
 
 
 class Logger():

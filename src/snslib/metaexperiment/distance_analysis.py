@@ -15,8 +15,8 @@ import torchvision.transforms as T
 
 from snslib.experiment.utils.args import CUSTOM_WEIGHTS, DATASET, REFERENCES, WEIGHTS
 from snslib.experiment.utils.misc import ref_code_recovery
-from metaexperiment.metaexp import SnS_metadata
-from metaexperiment.plots import pad_tensor_lists, vertical_stack_images, wrap_text
+from snslib.metaexperiment.metaexp import SnS_metadata
+from snslib.metaexperiment.plots import pad_tensor_lists, vertical_stack_images, wrap_text
 from snslib.core.generator import DeePSiMGenerator
 from snslib.core.subject import TorchNetworkSubject
 from snslib.core.utils.dataset import MiniImageNet

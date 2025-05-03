@@ -12,7 +12,7 @@ from torchvision import transforms
 import matplotlib.pyplot as plt
 
 from snslib.experiment.utils.args import CUSTOM_WEIGHTS, NATURAL_RECORDINGS, REFERENCES, WEIGHTS
-from metaexperiment.distance_analysis import DEVICE
+from snslib.metaexperiment.distance_analysis import DEVICE
 from snslib.core.utils.io_ import load_pickle
 from snslib.experiment.utils.misc import ref_code_recovery
 from snslib.core.subject import TorchNetworkSubject

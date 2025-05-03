@@ -16,8 +16,8 @@ import torch.nn as nn
 from torch import Tensor
 import torch
 
-from .misc import InputLayer, default, fit_bbox
-from .types import RFBox, RecordingUnits, States
+from snslib.core.utils.misc import InputLayer, default, fit_bbox
+from snslib.core.utils.types import RFBox, RecordingUnits, States
 
 # TODO Document together
 

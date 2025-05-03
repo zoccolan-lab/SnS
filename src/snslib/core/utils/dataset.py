@@ -20,10 +20,10 @@ from PIL import Image
 from typing import Callable, Dict, List, Tuple, cast
 from torch.utils.data import DataLoader
 
-from .logger import Logger, SilentLogger
-from .io_ import read_json, read_txt
-from .types import Mask, Stimuli
-from .misc import device
+from snslib.core.utils.logger import Logger, SilentLogger
+from snslib.core.utils.io_ import read_json, read_txt
+from snslib.core.utils.types import Mask, Stimuli
+from snslib.core.utils.misc import device
 
 class NaturalStimuliLoader:
     '''

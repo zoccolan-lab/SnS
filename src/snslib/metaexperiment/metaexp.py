@@ -10,7 +10,7 @@ import pprint
 import argparse
 
 from src.experiments.Stretch_and_Squeeze.plots import pf1_fromPKL, plot_metaexp_p1
-from metaexperiment.metaexp_functs import get_df_summary
+from snslib.metaexperiment.metaexp_functs import get_df_summary
 from snslib.core.utils.io_ import load_pickle, read_json
 from tqdm import tqdm
 

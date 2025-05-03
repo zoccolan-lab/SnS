@@ -27,11 +27,11 @@ from pandas import DataFrame
 from numpy.typing import NDArray
 import pandas as pd
 
-from .logger import Logger, SilentLogger
+from snslib.core.utils.logger import Logger, SilentLogger
 
 
 
-from .types import RFBox
+from snslib.core.utils.types import RFBox
 import subprocess
 
 # --- TYPING ---

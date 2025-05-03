@@ -13,7 +13,7 @@ from PIL import Image
 import numpy as np
 
 
-from .types import RecordingUnits
+from snslib.core.utils.types import RecordingUnits
 
 # --- DIRECTORIES ---
 

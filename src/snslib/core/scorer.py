@@ -21,8 +21,8 @@ from scipy.spatial.distance import pdist, squareform
 from deap import base, creator, tools
 
 
-from .utils.types import LayerReduction, ScoringUnits, Fitness, States, UnitsReduction, UnitsMapping
-from .utils.misc import default, minmax_norm
+from snslib.core.utils.types import LayerReduction, ScoringUnits, Fitness, States, UnitsReduction, UnitsMapping
+from snslib.core.utils.misc import default, minmax_norm
 
 # NOTE: This is the same type of _MetricKind from scipy.spatial.distance
 #       which we need to redefine for issues with importing private variables from modules.

@@ -14,11 +14,11 @@ from torch import nn
 from torch.utils.hooks import RemovableHandle
 import torch.nn.functional as F
 
-from .utils.torch_net_load_functs import torch_load
-from .utils.logger import Logger, SilentLogger
-from .utils.probe import RecordingProbe_Grad, SetterProbe, SilicoProbe,RecordingProbe
-from .utils.misc import InputLayer, default, device, unpack, replace_inplace
-from .utils.types import RecordingUnits, Stimuli, States
+from snslib.core.utils.torch_net_load_functs import torch_load
+from snslib.core.utils.logger import Logger, SilentLogger
+from snslib.core.utils.probe import RecordingProbe_Grad, SetterProbe, SilicoProbe,RecordingProbe
+from snslib.core.utils.misc import InputLayer, default, device, unpack, replace_inplace
+from snslib.core.utils.types import RecordingUnits, Stimuli, States
 
 
 class Subject(ABC):
