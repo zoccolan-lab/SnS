@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snslib"
+version = "0.1.0"
+authors = [
+  { name="Lorenzo Tausani", email="ltausani@sissa.it" },
+  { name="Giacomo Amerio", email="gamerio@sissa.it" },
+  # Add other authors
+]
+description = "A framework for simulating visual neuroscience experiments using Artificial Neural Networks."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Computational Neuroscience", # Maybe?
+]
+dependencies = [
+    "torch==2.3.0",
+    "torchvision==0.18.0",
+    "numpy>=1.23.2,<1.28.0",
+    "scipy~=1.11.4",
+    "einops~=0.8.0",
+    "tqdm~=4.66.4",
+    "deap~=1.4.1",
+    "cma~=4.0.0",
+    "loguru~=0.7.2",
+    "rich~=13.8.1",
+    "matplotlib~=3.8.4",
+    "seaborn~=0.13.2",        
+    "pandas~=2.2.2",
+    "Pillow~=10.4.0",
+    "torchjd>=0.1.0",
+    "scikit_learn~=1.2.2" ,
+    "ipython~=8.26.0",    
+    "ipykernel>=6.0.0,<7.0.0",
+    "robustness~=1.2.1.post2", 
+    
+]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
