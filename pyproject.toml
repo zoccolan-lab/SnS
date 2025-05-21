@@ -6,8 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "snslib"
 version = "0.1.0"
 authors = [
-  { name="Lorenzo Tausani", email="ltausani@sissa.it" },
-  { name="Giacomo Amerio", email="gamerio@sissa.it" },
+  { name="Anonymous", email="anonymous@anonymous.com" },
+  { name="Anonymous", email="anonymous@anonymous.com" },
   
 ]
 description = "A framework for simulating visual neuroscience experiments using Artificial Neural Networks."
