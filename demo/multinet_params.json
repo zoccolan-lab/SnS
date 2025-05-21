@@ -1,0 +1,131 @@
+{
+    "exp_name": "SnS_multinet_analysis",
+    "ref_net": {
+        "net_name": "alexnet",
+        "robust": "",
+        "gen": "fc7"
+    },
+    "SNS_exp": {
+        "query": [
+            [
+                "resnet50",
+                "56_linear_01",
+                "robust_l2",
+                "00_input_01",
+                "500",
+                "invariance nat refs"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "robust_l2",
+                "26_conv_25",
+                "500",
+                "invariance nat refs"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "robust_l2",
+                "52_conv_51",
+                "500",
+                "invariance nat refs"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "vanilla",
+                "00_input_01",
+                "500",
+                "invariance nat refs"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "vanilla",
+                "26_conv_25",
+                "500",
+                "invariance nat refs"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "vanilla",
+                "52_conv_51",
+                "500",
+                "invariance nat refs"
+            ]
+        ],
+        "space_size": "all",
+        "filtering": {
+            "nat_stat_checkpoint_25_p1_n_it": []
+        },
+        "p1": "end"
+    },
+    "XDREAM": {
+        "vanilla": {
+            "fp": "/home/ltausani/Desktop/General_reference.pkl",
+            "net": "resnet50",
+            "ly": "158_linear_01",
+            "gen": "fc7"
+        },
+        "l2robust": {
+            "fp": "/home/ltausani/Desktop/General_reference.pkl",
+            "net": "resnet50_r",
+            "ly": "158_linear_01",
+            "gen": "fc7"
+        }
+    },
+    "nats": {
+        "n_samples": 10,
+        "types": [
+            "rand",
+            "byclass"
+        ]
+    },
+    "plotting": {
+        "mXDREAM - l2robust": {
+            "color": "#2bdba6",
+            "linestyle": "--",
+            "label": "Robust MEI"
+        },
+        "resnet50#56_linear_01#robust_l2#00_input_01#500#invariance nat refs#VSref": {
+            "color": "#1b9e77",
+            "linestyle": "-",
+            "label": "Robust Pixel space"
+        },
+        "resnet50#56_linear_01#robust_l2#26_conv_25#500#invariance nat refs#VSref": {
+            "color": "#1b9e77",
+            "linestyle": "--",
+            "label": "Robust Layer3_conv1"
+        },
+        "resnet50#56_linear_01#robust_l2#52_conv_51#500#invariance nat refs#VSref": {
+            "color": "#1b9e77",
+            "linestyle": ":",
+            "label": "Robust Layer4_conv7"
+        },
+        "mXDREAM - vanilla": {
+            "color": "#ffcdd2",
+            "linestyle": ":",
+            "label": "Standard MEI"
+        },
+        "resnet50#56_linear_01#vanilla#00_input_01#500#invariance nat refs#VSref": {
+            "color": "#e57373",
+            "linestyle": "-",
+            "label": "Standard Pixel space"
+        },
+        "resnet50#56_linear_01#vanilla#26_conv_25#500#invariance nat refs#VSref": {
+            "color": "#e57373",
+            "linestyle": "--",
+            "label": "Standard Layer3_conv1"
+        },
+        "resnet50#56_linear_01#vanilla#52_conv_51#500#invariance nat refs#VSref": {
+            "color": "#e57373",
+            "linestyle": ":",
+            "label": "Standard Layer4_conv7"
+        },
+        "generate_collages": true,
+        "save_single_imgs": false,
+        "neurons2view": []
+    }
+}

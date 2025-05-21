@@ -26,6 +26,8 @@ from snslib.core.utils.misc import default, minmax_norm
 
 # NOTE: This is the same type of _MetricKind from scipy.spatial.distance
 #       which we need to redefine for issues with importing private variables from modules.
+# NOTE: This is the same type of _MetricKind from scipy.spatial.distance
+#       which we need to redefine for issues with importing private variables from modules.
 _MetricKind = Literal[
     'braycurtis', 'canberra', 'chebychev', 'chebyshev',
     'cheby', 'cheb', 'ch', 'cityblock', 'cblock', 'cb',
@@ -434,9 +436,11 @@ class PairDistanceScorer(Scorer):
         
     def _distance_reduction(
         self,
-        state         : States,
-        reduce        : Callable[[NDArray], NDArray],
-        scoring_units : Dict[str, ScoringUnits],
+        state               : States,
+        reduce              : Callable[[NDArray], NDArray],
+        scoring_units       : Dict[str, ScoringUnits],
+        low_distance_betw   : str = False, #old
+        betw_reduce         : Callable[[NDArray], NDArray] = partial(np.max, axis = 1) #old
     ) -> Dict[str, NDArray]:
         '''
         Class used for the unit reduction.
@@ -465,6 +469,12 @@ class PairDistanceScorer(Scorer):
             for layer, activations in state.items()
             if layer in scoring_units
         }
+        
+        if low_distance_betw:
+            low_ly = list(scores.keys())[0]
+            betw_dists = squareform(-self._metric(state[low_ly][:,0,:]))
+            np.fill_diagonal(betw_dists, -np.inf)
+            scores[f'{low_ly}_betw'] = betw_reduce(betw_dists)
         
         return scores
     
@@ -759,18 +769,24 @@ class ParetoReferencePairDistanceScorer(PairDistanceScorer):
         :rtype: Scores
         """
         
+        #print(state['56_linear_01'].shape)
+        #state['56_linear_01'] = np.zeros_like(state['56_linear_01'])
+        
         # Apply bound constraints
         state_dup = self.bound_constraints(state)
         #PROVA
         #my_layers = list(state.keys())
         #ref_obj = {my_layers[0]: -150, my_layers[1]: 0}
         #state_dup = {k: v - ref_obj[k] for k,v in state_dup.items()}
-        
+        between_dist_k = list(state.keys())[0]+'_betw'
+        if between_dist_k in state_dup: weights[between_dist_k] = -1 #old
         pf_vec, coordinates_p1 = self.pareto_front(state_dup, weights = [v for v in weights.values()])
         self.coordinates_p1 = coordinates_p1
         if self.within_pareto_order == 'random': scores = random_pareto_rank(pf_vec)
         elif self.within_pareto_order == 'crowding': scores = ranking_by_crowding(pf_vec, state_dup)
-        elif self.within_pareto_order == 'onevar': scores = ranking_by_onevar(pf_vec, state_dup, task = [v for v in weights.values()][-1])
+        elif 'onevar' in self.within_pareto_order:
+            ly_idx = 0 if self.within_pareto_order.split('_')[-1] == 'down' else -1
+            scores = ranking_by_onevar(pf_vec, state_dup, task = [v for v in weights.values()][1], ly_idx = ly_idx)
         
         return scores
     
@@ -796,7 +812,7 @@ class ParetoReferencePairDistanceScorer(PairDistanceScorer):
             layer: np.array([
                 individual_state if self._bounds[layer](individual_state) else -float('inf') #-float('inf') 
                 for individual_state in layer_state
-            ])
+            ]) if layer in self._bounds else layer_state
             for layer, layer_state in state.items()
         }
         
@@ -885,14 +901,14 @@ def ranking_by_crowding(pf_vec: NDArray, metrics: Dict[str, NDArray]) -> NDArray
     scores = scores.astype(np.float32)    
     return scores
 
-def ranking_by_onevar(pf_vec: NDArray, metrics: Dict[str, NDArray], task: int)-> NDArray:
+def ranking_by_onevar(pf_vec: NDArray, metrics: Dict[str, NDArray], task: int, ly_idx = -1)-> NDArray:
     """
     Rank solutions within the same pareto front according to one objective function
     task: invariance = 1, adversarial = -1
     """
     #the scores will be the pareto front plus a value that is computed from the hidden constraint
     pf_scores = np.abs(pf_vec - (np.max(pf_vec)+1))
-    last_ly = list(metrics.keys())[-1]
+    last_ly = list(metrics.keys())[ly_idx]
     hidden_scores = 1/np.abs(metrics[last_ly]) if task == 1 else np.abs(metrics[last_ly])
     scores = (pf_scores+1)*(max(hidden_scores)+1)+hidden_scores
     return scores

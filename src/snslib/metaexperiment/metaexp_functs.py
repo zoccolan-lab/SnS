@@ -10,6 +10,8 @@ from snslib.experiment.utils.misc import ref_code_recovery
 from snslib.core.generator import DeePSiMGenerator
 from snslib.core.utils.io_ import load_pickle
 from snslib.core.utils.misc import aggregate_matrix, deep_get, resize_image_tensor
+from torchvision import transforms
+from PIL          import Image
 
 NAT_STAT_AGGREGATOR = {
     'max': partial(aggregate_matrix, row_aggregator = partial(np.max, axis = 1)),
@@ -140,24 +142,35 @@ def compute_max_pix_dist(SnS_mexp_data):
     """
     #get the codes for reference images
     references =[]
+    ref_imgs = []
     for ref_i,ns,is_r, up_ly in zip(SnS_mexp_data['reference_info'],SnS_mexp_data['net_sbj'],SnS_mexp_data['robust'], SnS_mexp_data['upper_ly']):
-        ref_f = load_pickle(ref_i['ref_file'])
-        ref_code = ref_code_recovery(reference_file = ref_f, 
-                    keys = {'network': ns+'_r' if is_r else ns, 
-                            'gen_var': ref_i['gen_var'], 
-                            'layer': up_ly,
-                            'neuron': ref_i['neuron'],
-                            'seed': ref_i['seed'],
-                            'code':'code'}, 
-                    ref_file_name = ref_i['ref_file'])         
-        references.append(ref_code)
-    references = np.vstack(references)
-    generator = DeePSiMGenerator(
-        root    = WEIGHTS,
-        variant = ref_i['gen_var']
-    ).to('cuda')
-    #generate the reference images from the codes
-    ref_imgs = generator(references)
+        if isinstance(ref_i, str) and os.path.exists(ref_i):
+            transform = transforms.Compose([
+                transforms.Resize((256, 256)),
+                transforms.ToTensor(),
+            ])
+            ref_imgs.append(transform(Image.open(ref_i).convert("RGB")).unsqueeze(0).to('cuda'))
+        else:
+            ref_f = load_pickle(ref_i['ref_file'])
+            ref_code = ref_code_recovery(reference_file = ref_f, 
+                        keys = {'network': ns+'_r' if is_r else ns, 
+                                'gen_var': ref_i['gen_var'], 
+                                'layer': up_ly,
+                                'neuron': ref_i['neuron'],
+                                'seed': ref_i['seed'],
+                                'code':'code'}, 
+                        ref_file_name = ref_i['ref_file'])         
+            references.append(ref_code)
+    if len(ref_imgs) == 0:
+        references = np.vstack(references)
+        generator = DeePSiMGenerator(
+            root    = WEIGHTS,
+            variant = ref_i['gen_var']
+        ).to('cuda')
+        #generate the reference images from the codes
+        ref_imgs = generator(references)
+    else:
+        ref_imgs = torch.cat(ref_imgs, dim=0)
     ref_imgs = torch.from_numpy(resize_image_tensor(ref_imgs, (224,224)))
     #get the maximum pixel-wise distance for each image, that is the distance between the reference image and its complement 1- ref_i
     max_pix_dist =np.array([torch.norm(torch.max(ref_i, 1 - ref_i)).detach().cpu().numpy()

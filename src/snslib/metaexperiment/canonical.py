@@ -19,6 +19,7 @@ from snslib.core.subject import TorchNetworkSubject
 from snslib.core.generator import DeePSiMGenerator
 from snslib.core.utils.misc import deep_get
 
+
 def build_subject_and_generator(label: str):
     """
     Given an experiment label (e.g. 'resnet50#…#robust_l2#…'), return
@@ -50,23 +51,35 @@ def build_subject_and_generator(label: str):
     generator = DeePSiMGenerator(root=str(WEIGHTS), variant='fc7').to(DEVICE)
     return repr_net, generator
 
+
+
+
+
 def distance_analysis_transformations(
     repr_net: TorchNetworkSubject,
     generator: DeePSiMGenerator,
     experiment: Dict[str, Any],
+    process_natural_images: bool = True, # New parameter
 ) -> Dict[str, Any]:
     """
     For each reference unit in the experiment, apply rotations, translations, and scaling (with black padding)
     to the reference stimulus and compute Euclidean distances in pixel space and the corresponding neuron activations.
+    If process_natural_images is True, do the same for corresponding natural images.
+
+    Args:
+        repr_net: The network subject.
+        generator: The generator for creating stimuli.
+        experiment: Dictionary containing experiment data.
+        process_natural_images: Whether to process natural images. Defaults to True.
 
     Returns:
         results: Dict[str, Dict[str, Dict[str, List[float]]]]
             A nested dictionary with keys 'rotation', 'translation', 'scaling', each containing:
                 - 'params': list of transformation parameters
-                - 'ref_distances': Dict[unit, List[float]]
-                - 'ref_activations': Dict[unit, List[float]]
-                - 'nat_distances': Dict[unit, List[float]]
-                - 'nat_activations': Dict[unit, List[float]]
+                - 'ref_distances': Dict[unit_key, List[float]]
+                - 'ref_activations': Dict[unit_key, List[float]]
+                - 'nat_distances': Dict[unit_key, List[float]] (if process_natural_images is True)
+                - 'nat_activations': Dict[unit_key, List[float]] (if process_natural_images is True)
     """
     # Prepare experiment data
     fp = experiment['path'][0]
@@ -74,7 +87,7 @@ def distance_analysis_transformations(
 
     # Identify unique target units
     units = df['high_target'].unique()
-    lower_ly = df['lower_ly'].iloc[0]
+    # lower_ly = df['lower_ly'].iloc[0] # Defined per unit later
 
     # Load data pickle and parsing utilities
     data_pkl = load_pickle(os.path.join(fp, 'data.pkl'))
@@ -82,148 +95,136 @@ def distance_analysis_transformations(
     # Define transformation parameters
     angles = [0,45 , 90, 135,180]
     percents = [0.0,0.05,0.1, 0.25, 0.5]
-    # translations = [(-80, 0), (80, 0), (0, -80), (0, 80),(0,0)]  # (x, y) pixel shifts
-    scales = [0.2,0.4,0.6,0.8,1.0]                  # scaling factors
+    scales = [0.2,0.4,0.6,0.8,1.0]
 
     # Prepare converters
     to_pil = transforms.ToPILImage()
     to_tensor = transforms.ToTensor()
 
-    # Load stimulus paths and natural recordings
+    # Load stimulus paths and natural recordings metadata (paths always needed for now)
     SP_PATH = '/home/ltausani/Desktop/Zout/NeuralRecording/neurec_rnet50_vaniGlia_rout_and_lbls/neurec_rnet50_vaniGlia_rout_and_lbls-0/stim_paths.npy'
     stim_paths = np.load(SP_PATH, allow_pickle=True)
-    nat_recs = load_pickle(NATURAL_RECORDINGS)
+    # nat_recs = load_pickle(NATURAL_RECORDINGS) # Loaded per unit later
 
     # Initialize results dictionary
     results: Dict[str, Any] = {
         'rotation': {
             'params': angles,
             'ref_distances': {}, 'ref_activations': {},
-            'nat_distances': {}, 'nat_activations': {}
         },
         'translation': {
             'params': percents,
             'ref_distances': {}, 'ref_activations': {},
-            'nat_distances': {}, 'nat_activations': {}
         },
         'scaling': {
             'params': scales,
             'ref_distances': {}, 'ref_activations': {},
-            'nat_distances': {}, 'nat_activations': {}
         }
     }
 
+    if process_natural_images:
+        for t_type in results.keys(): # Use results.keys() for clarity
+            results[t_type]['nat_distances'] = {}
+            results[t_type]['nat_activations'] = {}
+
     # Iterate over each target unit
-    for n in units: #for each target unit
-        idxs = df[df['high_target'] == n].index.tolist()
-        n = str(n).replace('(', '[').replace(')', ']')
-        if n.isdigit(): n = f"[{n}]"
+    for unit_identifier in units:
+        idxs = df[df['high_target'] == unit_identifier].index.tolist()
         
-        ref_info = [data_pkl['reference_info'][i] for i in idxs][0]
-        ref_ly = df.loc[idxs]['upper_ly'].unique()[0] #NOTE: not the best way to do this
-        net = df.loc[idxs]['net_sbj'].unique()[0]
-        net = net + '_r' if df.loc[idxs]['robust'].unique()[0] else net
-        ref_info['layer'] = ref_ly
-        ref_fp = ref_info.pop('ref_file')
-        ref_info['code'] = 'code'
-        ref_info = {'network': net, **ref_info}
-        code_ref = ref_code_recovery(reference_file = load_pickle(REFERENCES), 
-                                        keys = ref_info, ref_file_name = ref_fp)
+        ref_info_list = [data_pkl['reference_info'][i] for i in idxs]
+        if not ref_info_list: continue # Should not happen if units come from df
+        ref_info = ref_info_list[0]
+
+        ref_ly = df.loc[idxs, 'upper_ly'].unique()[0]
+        lower_ly = df.loc[idxs, 'lower_ly'].iloc[0]
+        net_sbj = df.loc[idxs, 'net_sbj'].unique()[0]
+        is_robust = df.loc[idxs, 'robust'].unique()[0]
+        
+        net_for_ref_recovery = net_sbj + '_r' if is_robust else net_sbj
+        
+        # Create a mutable copy for ref_code_recovery
+        current_ref_info = ref_info.copy()
+        current_ref_info['layer'] = ref_ly
+        ref_fp = current_ref_info.pop('ref_file')
+        current_ref_info['code'] = 'code' # Placeholder, actual code is recovered
+        current_ref_info = {'network': net_for_ref_recovery, **current_ref_info}
+        
+        code_ref = ref_code_recovery(reference_file=load_pickle(REFERENCES), 
+                                     keys=current_ref_info, ref_file_name=ref_fp)
         ref_stimulus = generator(codes=code_ref)
 
-        # Prepare original input tensor
         ref_img = ref_stimulus[0].cpu()
         orig_inp = to_tensor(to_pil(ref_img)).unsqueeze(0).to(DEVICE)
 
-        ref_ly   = df.loc[idxs, 'upper_ly'].unique()[0]
-        net_key  = df.loc[idxs, 'net_sbj'].unique()[0]
-        net_type = 'robust_l2' if df.loc[idxs, 'robust'].unique()[0] else 'vanilla'
+        # --- Natural recordings metadata, ht, current_unit_key, and linear_idx (ALWAYS NEEDED) ---
+        net_key_for_nat_recs  = net_sbj # Use the base name for nat_recs lookup as per original structure
+        net_type_for_nat_recs = 'robust_l2' if is_robust else 'vanilla' # Adjust if your nat_recs keys differ
 
-        # load the natural recordings for this layer
-        nat_recs  = load_pickle(Param_nat_stats)
-        nat_layer = deep_get(nat_recs, [net_key, net_type, ref_ly])
+        nat_recs_data = load_pickle(Param_nat_stats)
+        nat_layer = deep_get(nat_recs_data, [net_key_for_nat_recs, net_type_for_nat_recs, ref_ly])
         labels    = nat_layer['labels']
 
-        # parse the high_target and find the linear index in `labels`
-        raw_ht = df.loc[idxs, 'high_target'].iloc[0]
-        ht = ast.literal_eval(raw_ht) if isinstance(raw_ht, str) else raw_ht
-        if isinstance(ht, (list, tuple)) and len(ht) == 3:
+        # unit_identifier is the raw value from df['high_target']
+        # ht is the parsed version (e.g., int, or tuple from string)
+        ht = ast.literal_eval(str(unit_identifier)) if isinstance(unit_identifier, str) else unit_identifier
+        
+        current_unit_key: Any # Declare type for clarity
+        if isinstance(ht, (list, tuple)) and len(ht) == 3: # e.g. (channel, h, w)
             linear_idx = next(i for i, triple in enumerate(zip(*labels)) if triple == tuple(ht))
-        else:
-            key = ht[0] if isinstance(ht, (list, tuple)) else ht
-            linear_idx = int(np.where(labels == key)[0][0])
+            current_unit_key = tuple(ht) 
+        else: # e.g. channel index
+            # _key_for_label_lookup should be the actual value present in 'labels'
+            _key_for_label_lookup = ht[0] if isinstance(ht, (list, tuple)) and len(ht) == 1 else ht
+            linear_idx = int(np.where(labels == _key_for_label_lookup)[0][0])
+            current_unit_key = _key_for_label_lookup
+        # --- End of always needed part for linear_idx & current_unit_key ---
 
-        # pick the maximally activating natural image
-        row      = nat_layer['data'][linear_idx]
-        max_idx  = int(np.argmax(row))
-        max_path = stim_paths[max_idx]
-      # ensure 3‐channel RGB for the network’s preprocessing
-        nat_pil  = Image.open(max_path).convert('RGB')
-        #check by TAU
-        resize_transform = transforms.Resize((256, 256))
-        nat_pil = resize_transform(nat_pil) # Resize the image
-        orig_nat = to_tensor(nat_pil).unsqueeze(0).to(DEVICE)
-
-
-        # 1) get the original reference image tensor
         orig_feat_states = repr_net(stimuli=orig_inp)
         feat = orig_feat_states[lower_ly]
         if isinstance(feat, torch.Tensor):
             orig_feat_vec = feat.view(-1).cpu().numpy()
         else:
-            # NumPy array → flatten with ravel()
             orig_feat_vec = np.asarray(feat).ravel()
 
+        orig_nat_vec = None
+        nat_pil = None
+        if process_natural_images:
+            # This unit_identifier was used to get linear_idx which points into nat_layer['data']
+            row      = nat_layer['data'][linear_idx]
+            max_idx  = int(np.argmax(row))
+            max_path = stim_paths[max_idx]
+            
+            nat_pil_img  = Image.open(max_path).convert('RGB') # renamed to avoid conflict with module
+            resize_transform = transforms.Resize((256, 256))
+            nat_pil = resize_transform(nat_pil_img) # This is the PIL image for transformation
+            orig_nat = to_tensor(nat_pil).unsqueeze(0).to(DEVICE)
 
-        nat_states = repr_net(stimuli=orig_nat)
-        feat_nat   = nat_states[lower_ly]
-        if isinstance(feat_nat, torch.Tensor):
-            orig_nat_vec = feat_nat.view(-1).cpu().numpy()
-        else:
-            orig_nat_vec = np.asarray(feat_nat).ravel()
-
-
-        # Helper to compute distance & activation
-        # def eval_transform(pil_img, orig_tensor):
-        #     inp = to_tensor(pil_img).unsqueeze(0).to(DEVICE)
-        #     dist = euclidean(
-        #         orig_tensor.view(-1).cpu().numpy(),
-        #         inp.view(-1).cpu().numpy()
-        #     )
-        #     states = repr_net(stimuli=inp)
-        #     rep = states[ref_ly]
-        #     arr = rep.view(-1).cpu().numpy() if isinstance(rep, torch.Tensor) \
-        #         else np.asarray(rep).ravel()
-        #     act = float(arr[linear_idx])
-        #     return dist, act
+            nat_states = repr_net(stimuli=orig_nat)
+            feat_nat   = nat_states[lower_ly]
+            if isinstance(feat_nat, torch.Tensor):
+                orig_nat_vec = feat_nat.view(-1).cpu().numpy()
+            else:
+                orig_nat_vec = np.asarray(feat_nat).ravel()
         
-        
-        def eval_transform(pil_img, orig_vec):
-            # Convert PIL → tensor → add batch dim → device
-            inp = to_tensor(pil_img).unsqueeze(0).to(DEVICE)
+        # Define eval_transform here as it closes over linear_idx, ref_ly, lower_ly etc.
+        def eval_transform(pil_img_to_eval, base_feature_vector):
+            inp = to_tensor(pil_img_to_eval).unsqueeze(0).to(DEVICE)
             states = repr_net(stimuli=inp)
 
-            # 1) FEATURE‐SPACE distance at lower_ly
-            feat = states[lower_ly]
-            if isinstance(feat, torch.Tensor):
-                feat_vec = feat.view(-1).cpu().numpy()
+            feat_transformed = states[lower_ly]
+            if isinstance(feat_transformed, torch.Tensor):
+                feat_vec_transformed = feat_transformed.view(-1).cpu().numpy()
             else:
-                feat_vec = np.asarray(feat).ravel()
-            feat_dist = euclidean(orig_vec, feat_vec)
+                feat_vec_transformed = np.asarray(feat_transformed).ravel()
+            feat_dist = euclidean(base_feature_vector, feat_vec_transformed)
 
-            # 2) UPPER‐LY activation for plotting on the y-axis
             rep = states[ref_ly]
             if isinstance(rep, torch.Tensor):
                 arr = rep.view(-1).cpu().numpy()
             else:
                 arr = np.asarray(rep).ravel()
             act = float(arr[linear_idx])
-
             return feat_dist, act
-
-        
-        
-        
 
         # Apply each transformation type
         # 1) Rotations
@@ -232,50 +233,56 @@ def distance_analysis_transformations(
                 transforms.functional.rotate(to_pil(ref_img), ang),
                 orig_feat_vec
             )
-            d_nat, a_nat = eval_transform(
-                transforms.functional.rotate(nat_pil, ang),
-                orig_nat_vec
-            )
-            results['rotation']['ref_distances'].setdefault(key, []).append(d_ref)
-            results['rotation']['ref_activations'].setdefault(key, []).append(a_ref)
-            results['rotation']['nat_distances'].setdefault(key, []).append(d_nat)
-            results['rotation']['nat_activations'].setdefault(key, []).append(a_nat)
+            results['rotation']['ref_distances'].setdefault(current_unit_key, []).append(d_ref)
+            results['rotation']['ref_activations'].setdefault(current_unit_key, []).append(a_ref)
+            
+            if process_natural_images and nat_pil is not None and orig_nat_vec is not None:
+                d_nat, a_nat = eval_transform(
+                    transforms.functional.rotate(nat_pil, ang), # nat_pil is the loaded natural PIL
+                    orig_nat_vec
+                )
+                results['rotation']['nat_distances'].setdefault(current_unit_key, []).append(d_nat)
+                results['rotation']['nat_activations'].setdefault(current_unit_key, []).append(a_nat)
 
         # 2) Translations
-        ref_pil = to_pil(ref_img); w,h = ref_pil.size
+        pil_ref_img = to_pil(ref_img) # Use a distinct variable name
+        w,h = pil_ref_img.size
         for p in percents:
-            # define shifts
-            if p==0:
-                shifts = [(0,0)]
-            else:
-                dx, dy = int(p*w), int(p*h)
-                shifts = [( dx,0),(-dx,0),(0, dy),(0,-dy)]
-            drs, ars, dns, ans = [],[],[],[]
+            if p==0: shifts = [(0,0)]
+            else:    dx, dy = int(p*w), int(p*h); shifts = [( dx,0),(-dx,0),(0, dy),(0,-dy)]
+            
+            drs, ars = [],[]
             for tx,ty in shifts:
-                pil_r = transforms.functional.affine(ref_pil, 0, (tx,ty),1.0,0)
-                pil_n = transforms.functional.affine(nat_pil, 0, (tx,ty),1.0,0)
-                d_r, a_r = eval_transform(pil_r, orig_feat_vec)
-                d_n, a_n = eval_transform(pil_n, orig_nat_vec)
+                transformed_pil_r = transforms.functional.affine(pil_ref_img, 0, (tx,ty),1.0,0)
+                d_r, a_r = eval_transform(transformed_pil_r, orig_feat_vec)
                 drs.append(d_r); ars.append(a_r)
-                dns.append(d_n); ans.append(a_n)
-            results['translation']['ref_distances'].setdefault(key,[]).append(np.mean(drs))
-            results['translation']['ref_activations'].setdefault(key,[]).append(np.mean(ars))
-            results['translation']['nat_distances'].setdefault(key,[]).append(np.mean(dns))
-            results['translation']['nat_activations'].setdefault(key,[]).append(np.mean(ans))
+            results['translation']['ref_distances'].setdefault(current_unit_key,[]).append(np.mean(drs))
+            results['translation']['ref_activations'].setdefault(current_unit_key,[]).append(np.mean(ars))
+            
+            if process_natural_images and nat_pil is not None and orig_nat_vec is not None:
+                dns, ans = [],[]
+                for tx,ty in shifts:
+                    transformed_pil_n = transforms.functional.affine(nat_pil, 0, (tx,ty),1.0,0) # nat_pil is defined
+                    d_n, a_n = eval_transform(transformed_pil_n, orig_nat_vec)
+                    dns.append(d_n); ans.append(a_n)
+                results['translation']['nat_distances'].setdefault(current_unit_key,[]).append(np.mean(dns))
+                results['translation']['nat_activations'].setdefault(current_unit_key,[]).append(np.mean(ans))
 
         # 3) Scaling + black padding
-        for s in scales:
-            pil_ref = transforms.functional.affine(
-                to_pil(ref_img), angle=0, translate=(0, 0), scale=s, shear=0
+        for s_factor in scales: # Renamed s to s_factor
+            transformed_pil_ref_scaling = transforms.functional.affine(
+                to_pil(ref_img), angle=0, translate=(0, 0), scale=s_factor, shear=0
             )
-            pil_nat = transforms.functional.affine(
-                nat_pil, angle=0, translate=(0, 0), scale=s, shear=0
-            )
-            d_ref, a_ref = eval_transform(pil_ref,orig_feat_vec)
-            d_nat, a_nat = eval_transform(pil_nat,orig_nat_vec)
-            results['scaling']['ref_distances'].setdefault(key, []).append(d_ref)
-            results['scaling']['ref_activations'].setdefault(key, []).append(a_ref)
-            results['scaling']['nat_distances'].setdefault(key, []).append(d_nat)
-            results['scaling']['nat_activations'].setdefault(key, []).append(a_nat)
-
+            d_ref, a_ref = eval_transform(transformed_pil_ref_scaling, orig_feat_vec)
+            results['scaling']['ref_distances'].setdefault(current_unit_key, []).append(d_ref)
+            results['scaling']['ref_activations'].setdefault(current_unit_key, []).append(a_ref)
+            
+            if process_natural_images and nat_pil is not None and orig_nat_vec is not None:
+                transformed_pil_nat_scaling = transforms.functional.affine(
+                    nat_pil, angle=0, translate=(0, 0), scale=s_factor, shear=0 # nat_pil is defined
+                )
+                d_nat, a_nat = eval_transform(transformed_pil_nat_scaling, orig_nat_vec)
+                results['scaling']['nat_distances'].setdefault(current_unit_key, []).append(d_nat)
+                results['scaling']['nat_activations'].setdefault(current_unit_key, []).append(a_nat)
     return results
+

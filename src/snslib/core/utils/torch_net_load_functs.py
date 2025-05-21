@@ -38,6 +38,7 @@ def torch_load(net_sbj: 'TorchNetworkSubject', weights_path: str = '', pretraine
     # Apply preprocessing associated to pretrained weights
     # NOTE: `self.weights` is None in the case of random initialization
     #       and corresponds to no transformation
+    print(dir(net_sbj._weights))
     net_sbj._preprocessing = net_sbj._weights.transforms() if pretrained else lambda x: x
     
     #return net_sbj

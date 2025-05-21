@@ -19,6 +19,7 @@ import torch
 from snslib.core.utils.misc import InputLayer, default, fit_bbox
 from snslib.core.utils.types import RFBox, RecordingUnits, States
 
+
 # TODO Document together
 
 class SilicoProbe(ABC):
@@ -101,7 +102,9 @@ class SetterProbe(SilicoProbe):
     store the output shape of each of these layers.
     '''
 
-    def __init__(self, exclude : List[str] | None = None) -> None:
+    def __init__(self, 
+                 model : nn.Module| None = None,
+                 exclude : List[str] | None = None) -> None:
         '''
         Construct a SetterProbe by specifying the name of the
         attribute that the probe attaches to each sub-module of
@@ -119,6 +122,19 @@ class SetterProbe(SilicoProbe):
         # by triggering the clean method
         self.clean()
         
+        if model is not None:
+            # build id(module) -> qualified name map
+            self._qualified : Dict[int,str] = {
+                id(m): full_name
+                for full_name, m in model.named_modules()
+            }
+        else:
+            self._qualified = None
+        # map from our short identifier → full module path
+        self.id_to_full: Dict[str,str] = {}
+
+        # Initialize layer depth/occurrence
+        self.clean()
 
     def forward(
         self,
@@ -135,6 +151,10 @@ class SetterProbe(SilicoProbe):
         if hasattr(module, self.name_attr): return
         if hasattr(module, self.shape_attr): return
         
+        if self._qualified is not None:
+            # get the qualified “block” path
+            block_name = self._qualified.get(id(module), module._get_name())
+
         # Save the current layer name and output shape
         name = module._get_name().lower()
         curr_shape = out.detach().cpu().numpy().shape
@@ -155,6 +175,10 @@ class SetterProbe(SilicoProbe):
         occur = str(self._occur[name]).zfill(2)
         identifier = f'{depth}_{name}_{occur}'
         
+        if self._qualified is not None:
+            #record mapping to full name
+            self.id_to_full[identifier] = block_name
+
         # Attach the unique identifier to the (sub-)module
         setattr(module, self.name_attr,  identifier)
         setattr(module, self.shape_attr, curr_shape)

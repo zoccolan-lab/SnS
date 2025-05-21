@@ -1,0 +1,65 @@
+{
+    "exp_name": "Target_in_51_std",
+    "ref_net": {
+        "net_name": "alexnet",
+        "robust": "",
+        "gen": "fc7"
+    },
+    "SNS_exp": {
+        "query": [
+
+            [
+                "resnet50",
+                "52_conv_51",
+                "vanilla",
+                "00_input_01",
+                "500",
+                "invariance 2.0"
+            ]
+            
+        ],
+        "space_size": "all",
+        "filtering": {
+            "nat_stat_checkpoint_25_p1_n_it": []
+        },
+        "p1": "end"
+    },
+    "XDREAM": {
+        "vanilla": {
+            "fp": "/home/ltausani/Desktop/General_reference.pkl",
+            "net": "resnet50",
+            "ly": "52_conv2d_51",
+            "gen": "fc7"
+        },
+        "l2robust": {
+            "fp": "/home/ltausani/Desktop/General_reference.pkl",
+            "net": "resnet50_r",
+            "ly": "52_conv2d_51",
+            "gen": "fc7"
+        }
+    },
+    "nats": {
+        "n_samples": 10,
+        "types": [
+            "rand",
+            "byclass"
+        ]
+    },
+    "plotting": {
+        "mXDREAM - vanilla": {
+            "color": "#2bdba6",
+            "linestyle": "--",
+            "label": "MEI"
+        },
+        
+        "resnet50#52_conv_51#vanilla#00_input_01#500#invariance 2.0#VSref": {
+            "color": "#178867",
+            "linestyle": "--",
+            "label": "High Level"
+        },
+        
+        "generate_collages": true,
+        "save_single_imgs": true,
+        "neurons2view": []
+    }
+}

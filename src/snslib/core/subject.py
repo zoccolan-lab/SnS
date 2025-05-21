@@ -21,6 +21,7 @@ from snslib.core.utils.misc import InputLayer, default, device, unpack, replace_
 from snslib.core.utils.types import RecordingUnits, Stimuli, States
 
 
+
 class Subject(ABC):
     '''
     Abstract class representing a subject (animal or network)
@@ -153,13 +154,14 @@ class TorchNetworkSubject(InSilicoSubject, nn.Module):
         # Attach a SetterProbe to the network to properly 
         # assign a unique identifier to each layer and
         # retrieve it's input shape
-        setter_probe = SetterProbe(exclude=self.exclude_layers)
+        setter_probe = SetterProbe(exclude=self.exclude_layers, model =self._network)
         self.register_forward(setter_probe)
 
         # Expose the network to a fake input to trigger the hooks
         mock_inp = torch.zeros(inp_shape, device=self.device)
         with torch.no_grad():
             _ = self._network(mock_inp)
+        self.ly_id_to_full = setter_probe.id_to_full
         self.remove(setter_probe)
 
         # If provided, attach the recording probe to the network

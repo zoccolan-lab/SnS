@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import re
 import matplotlib as mpl
 from matplotlib.lines import Line2D
+from matplotlib.colors import to_rgba
 
 import numpy as np
 import pandas as pd
@@ -282,10 +283,12 @@ def SnS_scatterplot(
             
     transform_cache: Dict[tuple, Any] = {}
     TRANSFORM_COLORS = {
-        'rotation': '#8C564B',
-        'translation': '#1E88E5',
-        'scaling': '#2CA02C',
+        'rotation': '#9932CC',  # darkorchid
+        'translation': '#1E90FF',  # dodger blue
+        'scaling': '#2E8B57',  # sea green
     }
+    natural_data_plotted = False
+    all_params_for_ttype = {k: set() for k in TRANSFORM_COLORS.keys()} # Initialize to collect params
 
     # plot baseline and transformations
     for label, v in exps.items():
@@ -315,15 +318,16 @@ def SnS_scatterplot(
         y_last = np.array([abs(arr[-1]) for arr in y_series])
 
         # baseline plotting
+        current_marker = v.get('marker', 'o') # Get marker, default to 'o'
         if plot_type == 'centroid':
             ax.errorbar(
                 x_last.mean(), y_last.mean(),
                 xerr=x_last.std(), yerr=y_last.std(),
-                fmt='o', color=v['color'], label=v['label'], markersize=10, capsize=5
+                fmt=current_marker, color=v['color'], label=v['label'], markersize=25, capsize=5, markeredgecolor='white'
             )
         elif plot_type == 'scatter':
-            ax.scatter(x_last, y_last, c=v['color'], alpha=0.1, s=10)
-            ax.scatter(x_last.mean(), y_last.mean(), c=v['color'], marker='*', s=200, label=v['label'])
+            ax.scatter(x_last, y_last, c=v['color'], marker=current_marker, alpha=0.1, s=10)
+            ax.scatter(x_last.mean(), y_last.mean(), c=v['color'], marker='*', s=225, label=v['label'], ec='white')
         elif plot_type == 'splines':
             pass
 
@@ -335,7 +339,7 @@ def SnS_scatterplot(
             nat_series = df['nat_thresh']
         # first value per unit
         nat_first = df.groupby('high_target').apply(lambda g: nat_series.loc[g.index].iloc[0])
-        ax.axhline(nat_first.mean(), color=v['color'], linestyle='--')
+        ax.axhline(nat_first.mean(), color=v['color'], linestyle='--', linewidth=2.5)
 
     
         if canonical:
@@ -347,7 +351,8 @@ def SnS_scatterplot(
                 transform_cache[group_key] = distance_analysis_transformations(
                     repr_net=repr_net,
                     generator=generator,
-                    experiment=v
+                    experiment=v,
+                    process_natural_images=False
                 )
             trans = transform_cache[group_key]
 
@@ -355,6 +360,8 @@ def SnS_scatterplot(
             mpd_map = df.set_index('high_target')['max_pix_dist'].to_dict() if x_norm and lower_ly=='00_input_01' else {}
 
             for ttype, tres in trans.items():
+                if ttype in all_params_for_ttype:
+                    all_params_for_ttype[ttype].update(tres['params'])
                 params = tres['params']
                 units = list(tres['ref_distances'].keys())
                 # find identity index
@@ -363,101 +370,279 @@ def SnS_scatterplot(
                 id_idx = params.index(id_param)
 
                 avg_ref_x, avg_ref_y = [], []
-                avg_nat_x, avg_nat_y = [], []
-                for j in range(len(params)):
-                    xr = [tres['ref_distances'][u][j] for u in units]
-                    yr = [tres['ref_activations'][u][j] for u in units]
-                    xn = [tres['nat_distances'][u][j] for u in units]
-                    yn = [tres['nat_activations'][u][j] for u in units]
-                    if y_norm:
-                        yr = [(tres['ref_activations'][u][id_idx] -y) / tres['ref_activations'][u][id_idx] * 100 for u,y in zip(units, yr)]
-                        yn = [(tres['ref_activations'][u][id_idx]-y) / tres['ref_activations'][u][id_idx] * 100 for u,y in zip(units, yn)]
-                    if x_norm and lower_ly=='00_input_01':
-                        xr = [x/ mpd_map[u]*100 for u,x in zip(units, xr)]
-                        xn = [x/ mpd_map[u]*100 for u,x in zip(units, xn)]
-                    avg_ref_x.append(np.mean(xr)); avg_ref_y.append(np.mean(yr))
-                    avg_nat_x.append(np.mean(xn)); avg_nat_y.append(np.mean(yn))
+                std_ref_x, std_ref_y = [], [] # New: For standard deviations of reference
+                
+                has_natural_data = 'nat_distances' in tres and 'nat_activations' in tres
 
-                c = TRANSFORM_COLORS.get(ttype, 'k')
+                if has_natural_data:
+                    avg_nat_x, avg_nat_y = [], []
+                    
+                    std_nat_x, std_nat_y = [], [] # New: For standard deviations of natural
+                
+                for j in range(len(params)):
+                    # --- Reference Data ---
+                    ref_xr_j = [tres['ref_distances'][u][j] for u in units if u in tres['ref_distances'] and j < len(tres['ref_distances'][u])]
+                    ref_yr_j = [tres['ref_activations'][u][j] for u in units if u in tres['ref_activations'] and j < len(tres['ref_activations'][u])]
+                    
+                    ref_data_valid_for_j = True
+                    if not ref_xr_j or not ref_yr_j:
+                        ref_data_valid_for_j = False
+                    else:
+                        # Normalization for reference
+                        if y_norm:
+                           
+                            temp_yr_norm = []
+                            original_indices_for_yr = [idx for idx, u in enumerate(units) if u in tres['ref_activations'] and j < len(tres['ref_activations'][u])]
+                            
+                            for original_idx, y_val in zip(original_indices_for_yr, ref_yr_j):
+                                u = units[original_idx] # Get the unit corresponding to y_val
+                                if u in tres['ref_activations'] and id_idx < len(tres['ref_activations'][u]):
+                                    ref_val_at_id = tres['ref_activations'][u][id_idx]
+                                    temp_yr_norm.append((ref_val_at_id - y_val) / ref_val_at_id * 100)
+                                else: # Should not happen if ref_yr_j was built correctly and id_idx is valid for all those units
+                                    temp_yr_norm.append(np.nan) 
+                            ref_yr_j = [val for val in temp_yr_norm if not np.isnan(val)]
+
+
+                        if x_norm and lower_ly=='00_input_01':
+                            temp_xr_norm = []
+                            original_indices_for_xr = [idx for idx, u in enumerate(units) if u in tres['ref_distances'] and j < len(tres['ref_distances'][u])]
+
+                            for original_idx, x_val in zip(original_indices_for_xr, ref_xr_j):
+                                u = units[original_idx]
+                                if u in mpd_map:
+                                    temp_xr_norm.append(x_val / mpd_map[u] * 100)
+                                else: # Unit not in mpd_map
+                                    temp_xr_norm.append(np.nan)
+                            ref_xr_j = [val for val in temp_xr_norm if not np.isnan(val)]
+
+                        if not ref_xr_j or not ref_yr_j: # Check if empty after normalization
+                            ref_data_valid_for_j = False
+
+                    if ref_data_valid_for_j:
+                        avg_ref_x.append(np.mean(ref_xr_j))
+                        avg_ref_y.append(np.mean(ref_yr_j))
+                        std_ref_x.append(np.std(ref_xr_j))
+                        std_ref_y.append(np.std(ref_yr_j))
+                    else:
+                        avg_ref_x.append(np.nan); avg_ref_y.append(np.nan)
+                        std_ref_x.append(np.nan); std_ref_y.append(np.nan)
+
+                    # --- Natural Data ---
+                    if has_natural_data:
+                        nat_xn_j = [tres['nat_distances'][u][j] for u in units if u in tres['nat_distances'] and j < len(tres['nat_distances'][u])]
+                        nat_yn_j = [tres['nat_activations'][u][j] for u in units if u in tres['nat_activations'] and j < len(tres['nat_activations'][u])]
+
+                        nat_data_valid_for_j = True
+                        if not nat_xn_j or not nat_yn_j:
+                            nat_data_valid_for_j = False
+                        else:
+                            if y_norm:
+                                temp_yn_norm = []
+                                original_indices_for_yn = [idx for idx, u in enumerate(units) if u in tres['nat_activations'] and j < len(tres['nat_activations'][u])]
+
+                                for original_idx, y_val in zip(original_indices_for_yn, nat_yn_j):
+                                    u = units[original_idx]
+                                    if u in tres['ref_activations'] and id_idx < len(tres['ref_activations'][u]):
+                                        ref_val_at_id = tres['ref_activations'][u][id_idx]
+                                        temp_yn_norm.append((ref_val_at_id - y_val) / ref_val_at_id * 100)
+                                    else:
+                                        temp_yn_norm.append(np.nan)
+                                nat_yn_j = [val for val in temp_yn_norm if not np.isnan(val)]
+                            
+                            if x_norm and lower_ly=='00_input_01':
+                                temp_xn_norm = []
+                                original_indices_for_xn = [idx for idx, u in enumerate(units) if u in tres['nat_distances'] and j < len(tres['nat_distances'][u])]
+                                for original_idx, x_val in zip(original_indices_for_xn, nat_xn_j):
+                                    u = units[original_idx]
+                                    if u in mpd_map:
+                                        temp_xn_norm.append(x_val / mpd_map[u] * 100)
+                                    else:
+                                        temp_xn_norm.append(np.nan)
+                                nat_xn_j = [val for val in temp_xn_norm if not np.isnan(val)]
+
+                            if not nat_xn_j or not nat_yn_j: # Check if empty after normalization
+                                nat_data_valid_for_j = False
+                        
+                        if nat_data_valid_for_j:
+                            avg_nat_x.append(np.mean(nat_xn_j))
+                            avg_nat_y.append(np.mean(nat_yn_j))
+                            std_nat_x.append(np.std(nat_xn_j))
+                            std_nat_y.append(np.std(nat_yn_j))
+                        else:
+                            avg_nat_x.append(np.nan); avg_nat_y.append(np.nan)
+                            std_nat_x.append(np.nan); std_nat_y.append(np.nan)
+
+
+                c = TRANSFORM_COLORS[ttype]
+                # order parameters
                 if ttype == 'scaling':
-                                    # Sort scaling parameters by distance from identity (1.0)
                     order_p = np.argsort([abs(p - 1.0) for p in params])
                 else:
-                    # Default sort for rotation and translation
-                    order_p = np.argsort(params)                
-                sorted_params = np.array(params)[order_p]
-                sorted_ref_x_by_param = np.array(avg_ref_x)[order_p]
-                sorted_ref_y_by_param = np.array(avg_ref_y)[order_p]
-                sorted_nat_x_by_param = np.array(avg_nat_x)[order_p]
-                sorted_nat_y_by_param = np.array(avg_nat_y)[order_p]
+                    order_p = np.argsort(params)
 
-                # Plot reference points connected by parameter order
-                ax.plot(sorted_ref_x_by_param, sorted_ref_y_by_param, marker='o', linestyle='-', color=c)
-                # Add text annotations for reference points
-                # for px, py, param in zip(sorted_ref_x_by_param, sorted_ref_y_by_param, sorted_params):
-                #     ax.text(px + 0.5, py + 0.5, f"{param:.2f}", fontsize=8, color=c)
+                # sort arrays
+                sorted_ref_x = np.array(avg_ref_x)[order_p]
+                sorted_ref_y = np.array(avg_ref_y)[order_p]
+                sorted_std_x = np.array(std_ref_x)[order_p]
+                sorted_std_y = np.array(std_ref_y)[order_p]
 
-                # Plot natural points connected by parameter order
-                ax.plot(sorted_nat_x_by_param, sorted_nat_y_by_param, marker='o', linestyle='--', color=c)
-                # Add text annotations for natural points
-                # for px, py, param in zip(sorted_nat_x_by_param, sorted_nat_y_by_param, sorted_params):
-                #      # Slightly different offset for dashed line points to avoid overlap
-                #     ax.text(px + 0.5, py - 0.5, f"{param:.2f}", fontsize=8, color=c, alpha=0.7)
+                # Filter NaNs for reference plotting
+                valid_ref = ~np.isnan(sorted_ref_x) & ~np.isnan(sorted_ref_y)
+                
+                x_ref = sorted_ref_x[valid_ref]
+                y_ref = sorted_ref_y[valid_ref]
+                ex_ref = sorted_std_x[valid_ref]
+                ey_ref = sorted_std_y[valid_ref]
+
+                                # prepare gradient with stronger contrast
+                base_rgba = to_rgba(TRANSFORM_COLORS[ttype])
+                # pale = mix halfway with white
+                pale = tuple(base_rgba[i] + (1 - base_rgba[i]) * 0.5 if i < 3 else base_rgba[3] for i in range(4))
+                # strong = 50% darker than base
+                strong = tuple(base_rgba[i] * 0.5 if i < 3 else base_rgba[3] for i in range(4))
+                # interpolation t-values using sqrt for non-linear spacing
+                tvals = np.sqrt(np.linspace(0, 1, len(avg_ref_x)))
+                grads = [tuple(pale[j] + (strong[j] - pale[j]) * t for j in range(4)) for t in tvals]
+
+                # sort and mask
+                #order_p = np.argsort([abs(p - id_param) for p in params])
+                x_ref = np.array(avg_ref_x)[order_p]
+                y_ref = np.array(avg_ref_y)[order_p]
+                ex_ref = np.array(std_ref_x)[order_p]
+                ey_ref = np.array(std_ref_y)[order_p]
+                valid = ~np.isnan(x_ref) & ~np.isnan(y_ref)
+                x_ref, y_ref, ex_ref, ey_ref = x_ref[valid], y_ref[valid], ex_ref[valid], ey_ref[valid]
+                grads = [tuple(pale[i] + (strong[i] - pale[i]) * t for i in range(4)) for t in tvals]
 
 
-    t_handles = [Line2D([0],[0], color=c, marker='o', linestyle='-')
-                 for c in TRANSFORM_COLORS.values()]
-    t_labels = list(TRANSFORM_COLORS.keys())
-    s_handles = [
-        Line2D([0],[0], color='gray', linestyle='-', label='Reference'),
-        Line2D([0],[0], color='gray', linestyle='--', label='Natural')
-    ]
-    s_labels = [h.get_label() for h in s_handles]
-    combined_handles = t_handles + s_handles
-    combined_labels = t_labels + s_labels
+                # plot segments colored by first marker of each segment
+                if len(x_ref) > 1:
+                    pts = np.column_stack([x_ref, y_ref])
+                    segs = [pts[i:i+2] for i in range(len(pts)-1)]
+                    lc = LineCollection(segs, colors=grads[:-1], linewidths=4, zorder=10, alpha=0.9)
+                    ax.add_collection(lc)
 
-    # Create and add the FIRST legend (Canonical Transformations) as an artist
-    # Position it to the right of the plot
-    combined_legend = ax.legend(
-        combined_handles,
-        combined_labels,
-        title='Canonical Transformations',
-        loc='upper left',
-        bbox_to_anchor=(1.0001, 1), # Position outside axes (adjust x > 1)
+                # Plot points with errorbars
+                for pt, c in enumerate(grads):
+                    ax.errorbar(
+                        x_ref[pt], y_ref[pt],
+                        xerr=ex_ref[pt], yerr=ey_ref[pt],
+                        fmt='o', color=c, markersize=25,
+                        capsize=3, elinewidth=1,
+                        markeredgecolor='white', zorder=11,clip_on=False
+                    )
+    t_handles = [Line2D([0],[0], color=TRANSFORM_COLORS[ttype_key], marker='o', linestyle='-', markeredgecolor='white', markersize=25)
+                 for ttype_key in TRANSFORM_COLORS.keys()]
+
+    # Create labels for transformation types with their parameters
+    processed_t_labels = []
+    exp_handles, exp_labels = ax.get_legend_handles_labels() 
+    for ttype_key in TRANSFORM_COLORS.keys(): # Iterate in defined order
+        base_label_map = {'scaling': 'Scaling', 'translation': 'Translation', 'rotation': 'Rotation'}
+        base_name = base_label_map.get(ttype_key, ttype_key.capitalize())
         
-    )
-    ax.add_artist(combined_legend) # Add as an artist so it's not overwritten
+        current_params_set = all_params_for_ttype.get(ttype_key, set())
+        if current_params_set:
+            # Special sorting for scaling to be around 1.0, others numerically
+            if ttype_key == 'scaling':
+                sorted_params_list = sorted(list(current_params_set), key=lambda p: abs(p - 1.0))
+            else:
+                sorted_params_list = sorted(list(current_params_set))
+
+            param_strings = []
+            for p_val in sorted_params_list:
+                if isinstance(p_val, (float, int)): 
+                    if ttype_key == 'rotation':
+                        param_strings.append(f"{int(p_val)}\u00B0")
+                    elif ttype_key == 'translation':
+                        param_strings.append(f"{int(p_val*100)}%") 
+                    elif ttype_key == 'scaling':
+                        param_strings.append(f"{int(100-p_val*100)}%") 
+                    else:
+                        param_strings.append(f"{p_val}") 
+                else:
+                    param_strings.append(str(p_val))
+            
+            if len(param_strings) > 5: # Abbreviate if too many params
+                param_display_str = f"{', '.join(param_strings[:2])}, ..., {', '.join(param_strings[-2:])}"
+            else:
+                param_display_str = ", ".join(param_strings)
+            processed_t_labels.append(f"{base_name} ({param_display_str})") 
+        else:
+            processed_t_labels.append(base_name) # Fallback if no params were collected
+
+    # Create handles and labels for Reference/Natural lines
+    s_handles = [Line2D([0],[0], color='gray', linestyle='-', label='Reference')]
+    if natural_data_plotted:
+        s_handles.append(Line2D([0],[0], color='gray', linestyle='--', label='Natural'))
+    s_labels = [h.get_label() for h in s_handles]
+    
+    # Combine all handles and labels in the desired order for a single column legend
+    # Order: Experiments, then Transformations, then Reference/Natural
+    final_handles = exp_handles + t_handles
+    final_labels = exp_labels + processed_t_labels 
+    
+    # Ensure all legend markers have a consistent size
+    for handle in final_handles:
+        if hasattr(handle, 'set_markersize'):
+            handle.set_markersize(15) # Consistent marker size for legend items
+    
+    # Create the legend
+    if final_handles: # Only create legend if there are items to show
+        combined_legend = ax.legend(
+            final_handles,
+            final_labels,
+            ncol=1, # Single column
+            loc='upper right', # Current location
+            fontsize=27,       # Current fontsize
+            frameon=False
+        )
+        ax.add_artist(combined_legend)
 
     # 2. Get handles and labels for the EXPERIMENT legend (from errorbar/scatter calls)
     # This must be done *after* plotting the experiments but *before* the next legend call
-    exp_handles, exp_labels = ax.get_legend_handles_labels()
 
-    # Create the SECOND legend (Experiments) using the retrieved handles/labels
+
+
+
     # Position it below the plot
-    if exp_handles: # Only create legend if there are labeled elements
-        ax.legend(
-            exp_handles,
-            exp_labels,
-            title='Experiments', # Optional title for the second legend
-            loc='upper center',
-            bbox_to_anchor=(0.5, -0.1), # Position below axes (adjust y < 0)
-            ncol=min(3, len(exp_handles)), # Adjust columns dynamically or set fixed
-           
-        )
-    ax.set_title(f"Distance from reference - ending condition: {end_type} - Vanilla ResNet50", fontsize=20)
-    ax.set_xlabel(
-        f"Distance in {lower_ly}" + (" (% of max)" if x_norm else "")
-    )
-    ax.set_ylabel("Activation distance" + (" (% of reference)" if y_norm else ""))
+    # if exp_handles: # Only create legend if there are labeled elements
+    #     ax.legend(
+    #         exp_handles,
+    #         exp_labels,
+            
+    #         loc='upper center',
+    #         bbox_to_anchor=(0.5, -0.1), # Position below axes (adjust y < 0)
+    #         ncol=min(3, len(exp_handles)), # Adjust columns dynamically or set fixed
+    #         fontsize=32,
+    #         frameon=False
+    #     )
+    #ax.set_title(f"Distance from reference - ending condition: {end_type} - Robust ResNet50", fontsize=20)
+    
+    ax.set_ylabel("Activation decrement relative to the most exciting image" + (" (%)" if y_norm else ""), fontsize=32)
 
     if lower_ly == '00_input_01':
-        ax.set_xlim([0, 388] if not x_norm else [0, 100])
-        ax.axvline(130, color='black', linestyle='--')
+        ax.set_xlim([-0.001, 350] if not x_norm else [0, 100])
+        ax.axvline(130, color='black', linestyle='--', linewidth=2.5)
+        ax.set_xlabel("Euclidean distance from the most exciting image (pixels)", fontsize=32)
     if y_norm:
-        ax.set_ylim([0, 130])       #150
-
+        ax.set_ylim([-0.001, 140])       #150
+        
+    ax.spines['left'].set_position(('outward', 20))  
+    ax.spines['left'].set_linewidth(4)
+    ax.spines['bottom'].set_position(('outward', 20))  
+    ax.spines['bottom'].set_linewidth(4)
+    
+    # Hide the top and right spines for a cleaner look
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    
+    # Make ticks point outwards on both axes
+    ax.tick_params(axis='both', direction='out', labelsize=26, length=18, width=4, pad=5)
   
-    # plt.tight_layout(rect=[0, 0, 0.8, 1])  # Shrink the main plot to make room for legends on right
+    plt.tight_layout()  # Shrink the main plot to make room for legends on right
     
     # save if requested
     if savepath:
