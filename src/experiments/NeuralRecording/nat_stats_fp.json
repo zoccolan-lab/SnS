@@ -1,0 +1,29 @@
+{"resnet50":{
+
+    "vanilla":{
+    
+    "56_linear_01":"path/to/your/NEUREC_experiment_name1/NEUREC_experiment_name1-0",
+    
+    "26_conv2d_25":"path/to/your/NEUREC_experiment_name2/NEUREC_experiment_name2-0",
+    
+    "52_conv2d_51": "path/to/your/NEUREC_experiment_name3/NEUREC_experiment_name3-0"
+    
+    
+    },
+    
+    "robust_l2":{
+    
+    "56_linear_01":"path/to/your/NEUREC_experiment_name4/NEUREC_experiment_name4-0",
+    
+    "26_conv2d_25":"path/to/your/NEUREC_experiment_name5/NEUREC_experiment_name5-0",
+    
+    "52_conv2d_51": "path/to/your/NEUREC_experiment_name6/NEUREC_experiment_name6-0"
+    
+    }
+    
+    }
+    
+    
+    
+    
+}

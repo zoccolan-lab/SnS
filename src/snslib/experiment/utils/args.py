@@ -113,9 +113,6 @@ class ExperimentArgParams(Enum):
     HybridParamsConfig = ArgParam(name="hybrid_params_config", type=str, help="JSON-like dict with the actual hyperparameter values")
     
     
-    # params for GD SnS
-    LearningRate       = ArgParam(name="learning_rate",      type=float, help="Learning rate for gradient descent")
-    
     # --- MAGIC METHODS ---
     
     def __str__ (self)  -> str: return self.value.name
