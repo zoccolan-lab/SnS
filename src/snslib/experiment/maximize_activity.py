@@ -698,8 +698,7 @@ class LayersCorrelationMultiExperiment(BaseZdreamMultiExperiment):
         super()._init()
         
         # Description
-        self._data['desc'] = 'Layers correlations ...' # TODO @Lorenzo
-
+        self._data['desc'] = 'Layers correlations ...' 
         # Delta activation
         self._data['deltaA_rec'] = list()
 
@@ -978,7 +977,7 @@ class NeuronReferenceMultiExperiment(BaseZdreamMultiExperiment):
 
 
 """
-RECEPTIVE FIELD SCRATCH From DonTau @Lorenzo
+
 
 class MaximizeActivityRFMapsExperiment(MaximizeActivityExperiment):
     '''
@@ -1064,10 +1063,10 @@ class MaximizeActivityRFMapsExperiment(MaximizeActivityExperiment):
         img_side_net_input = self.subject.in_shape[-1]
         rescale_factor     = img_side_gen / img_side_net_input
         
-        # TODO @Lorenzo
+        
         for i, rf in enumerate(rf_on_input):
             
-            # TODO @Lorenzo
+           
             rf_rescaled = [
                 tuple(
                     round(c * rescale_factor) 
@@ -1080,7 +1079,7 @@ class MaximizeActivityRFMapsExperiment(MaximizeActivityExperiment):
                 for idx, coord in enumerate(rf)
             ]
             
-            # TODO @Loenzo       
+                
             rf_2p_mask[i][rf_rescaled[1][ 0]:rf_rescaled[1][-1]+1, rf_rescaled[2][0]]                      = True
             rf_2p_mask[i][rf_rescaled[1][ 0]:rf_rescaled[1][-1]+1, rf_rescaled[2][-1]]                     = True
             rf_2p_mask[i][rf_rescaled[1][ 0],                      rf_rescaled[2][0]:rf_rescaled[2][-1]+1] = True

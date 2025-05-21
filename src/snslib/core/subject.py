@@ -306,7 +306,7 @@ class TorchNetworkSubject(InSilicoSubject, nn.Module):
 
         # TODO: This return only the first RecorderProbe, what if
         # TODO: more than one were registered?
-        # TODO: @Paolo
+        #
 
         # If no probe was provided, use the first registered probe
         probe = default(probe, self.recorder)

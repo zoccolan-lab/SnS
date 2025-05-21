@@ -1,6 +1,3 @@
-'''
-TODO Document with @Paolo and @Lorenzo
-'''
 
 from abc import ABC, abstractmethod
 from itertools import product
@@ -263,12 +260,12 @@ class InfoProbe(SilicoProbe):
         self._b_target = backward_target
         
         # Initialize data structures to store the receptive field information
-        self._rf_dict: Dict[str, List]                             = defaultdict(list)     # TODO Doc @Paolo
-        self._output : Dict[Tuple[str, str], Tensor]               = {}                    # TODO Doc @Paolo 
-        self._shapes : Dict[str, Tuple[int, ...]]                  = {'input' : inp_shape} # TODO Doc @Paolo
-        self._ingrad : Dict[Tuple[str, str], List[NDArray | None]] = defaultdict(list)     # TODO Doc @Paolo
+        self._rf_dict: Dict[str, List]                             = defaultdict(list)     
+        self._output : Dict[Tuple[str, str], Tensor]               = {}                     
+        self._shapes : Dict[str, Tuple[int, ...]]                  = {'input' : inp_shape} 
+        self._ingrad : Dict[Tuple[str, str], List[NDArray | None]] = defaultdict(list)     
         
-        # TODO Doc @Paolo
+       
         self._rf_par : Dict[str, Dict[str, float]] = OrderedDict(
             input={
                 'jump' : 1,

@@ -690,9 +690,7 @@ class ZdreamExperiment(Experiment):
     
     @property
     def num_imgs(self) -> int: return self._optimizer.pop_size
-    ''' 
-    TODO @Paolo    
-    '''
+    
     
     # --- DATAFLOW METHODS ---
     
