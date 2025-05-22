@@ -1,7 +1,7 @@
 
 # Installation
 
-This project requires Python 3.9 or higher. We recommend using a virtual environment to manage dependencies.
+This project requires Python 3.10 or higher. We recommend using a virtual environment to manage dependencies.
 
 ## 1. Clone the repository (if you haven't already):
 
