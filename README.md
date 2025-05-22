@@ -82,9 +82,9 @@ The local settings are stored in the `src/snslib/experiment/local_settings.json`
 3. `dataset`: the path to the folder containing the mini-imagenet dataset. It can be downloaded from [here](https://www.kaggle.com/datasets/arjunashok33/miniimagenet).
    
    **NOTE**: Remember to add the `inet_labels.txt` file in the mini-imagenet dataset folder from [here](https://gist.github.com/aaronpolhamus/964a4411c0906315deb9f4a3723aac57#file-map_clsloc-txt)
-4. `references`: the path to the file containing the unified reference.pkl file. 
+4. `references`: the path to the file containing the unified reference.pkl file. If you don't have one yet, fill it in with the path to the folder where you want the reference.pkl file to be stored.
 5. `custom_weights`: the path to the folder containing the weights of the robust version of the subject network. It can be downloaded from the robustness library [here](https://www.dropbox.com/s/knf4uimlqsi1yz8/imagenet_l2_3_0.pt?dl=0). This should be in a folder called `resnet50` and the path should be the path to the folder containing the `resnet50` folder.
-6. `natural_recordings`: the path to the file containing the unified natural recordings.pkl file.
+6. `natural_recordings`: the path to the file containing the unified natural recordings.pkl file. If you don't have one yet, fill it in with the path to the folder where you want the natural recordings.pkl file to be stored.
    
 For details on how to update references and natural recordings, please refer to the following sections.
 
