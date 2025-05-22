@@ -66,7 +66,7 @@ If no errors occur, the installation was successful.
 
 *   **PyTorch Installation:** The `torch` and `torchvision` packages can sometimes have specific installation needs depending on your operating system and whether you want CUDA support (for GPU acceleration). If you encounter issues, please refer to the official PyTorch installation guide: [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
 *   **robustbench:** This dependency is installed directly from a GitHub repository. Ensure you have `git` installed and accessible in your PATH for this to work correctly.
-*   If you encounter any issues during installation, please double-check that you have Python 3.9+ and `pip` installed and updated.
+*   If you encounter any issues during installation, please double-check that you have Python 3.10+ and `pip` installed and updated.
 *   NOTE: In robustness folder (`robustness/imagenet_models`), the import 'from torchvision.models.utils import load_state_dict_from_url' is not working. Please change all occurencies of this import with 'from torch.hub import load_state_dict_from_url' instead.
 
 
