@@ -1,0 +1,7 @@
+{
+    "out_dir"      : "path/to/output/directory",
+    "weights"      : "path/to/your/deepsim-gen-weights",
+    "dataset"      : "path/to/your/nat-img-dataset(e.g. tiny-imagenet)",
+    "references"   : "path/to/your/unified reference.pkl",
+    "natural_recordings" : "path/to/your/unified natural_recordings.pkl"
+}

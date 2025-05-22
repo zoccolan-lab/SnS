@@ -14,9 +14,9 @@ ARGS: ParamConfig = {
     ExperimentArgParams.BatchSize        .value : 16                 , 
 
     # Subject
-    ExperimentArgParams.NetworkName      .value : "alexnet"          , # resnet50
-    ExperimentArgParams.RecordingLayers  .value : "21=[0]"           , #126=[0] for rn50
-    ExperimentArgParams.CustomWeightsPath.value : CUSTOM_WEIGHTS     , #'/home/lorenzo/Desktop/Datafolders/imagenet_l2_3_0.pt' ,
+    ExperimentArgParams.NetworkName      .value : "resnet50"          , 
+    ExperimentArgParams.RecordingLayers  .value : "126=[0]"           , 
+    ExperimentArgParams.CustomWeightsPath.value : CUSTOM_WEIGHTS     , # 'path/to/robust/model/weights' ,
     ExperimentArgParams.CustomWeightsVariant.value : ''              , #'imagenet_l2_3_0.pt''
     ExperimentArgParams.WeightLoadFunction.value : 'torch_load_pretrained' ,
     

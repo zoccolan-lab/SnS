@@ -10,7 +10,7 @@ from snslib.core.utils.logger import DisplayScreen, Logger, LoguruLogger, Silent
 from IPython import get_ipython
 import argparse
 
-SPACE_TXT = '/home/ltausani/Documents/GitHub/ZXDREAM/experiment/AdversarialAttack_BMM/run/low_spaces.txt'
+SPACE_TXT = '../src/experiments/Stretch_and_Squeeze/run/low_spaces.txt'
 
 
 def in_notebook():

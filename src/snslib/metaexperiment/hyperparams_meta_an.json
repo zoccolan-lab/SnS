@@ -1,0 +1,29 @@
+{"savepath":"path/to/where/you/want/to/save/the/plots",
+"plotting":{"resnet50#56_linear_01#robust_l2#00_input_01#500#invariance 2.0":{
+            "color": "k",
+            "marker": "o",
+            "label": "Invariance task"
+        },
+        "resnet50#56_linear_01#robust_l2#00_input_01#500#adversarial 1.0":{
+            "color": "k",
+            "marker": "s",
+            "label": "Adversarial task"
+        }
+        
+    },
+    
+    "nat_percentiles":{
+        "nat_rec_fp": "path/to/natural_recs.pkl",
+        "end_type":"end"
+    },
+    "SnS_scatterplot":[{
+        "plot_type":"centroid", 
+        "end_type":"end",
+        "common_units":false,
+        "x_norm":false,
+        "y_norm":true
+    }
+
+    ]
+    
+}

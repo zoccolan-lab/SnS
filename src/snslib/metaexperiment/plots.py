@@ -262,7 +262,7 @@ def SnS_scatterplot(
       - 'label': str
       - 'repr_net', 'generator', 'experiment': inputs for distance_analysis_transformations
     """
-    from metaexperiment.canonical import distance_analysis_transformations, build_subject_and_generator
+    from src.snslib.metaexperiment.canonical import distance_analysis_transformations, build_subject_and_generator
     fig, ax = plt.subplots(figsize=(16, 16))
     # assign colors
     colors = cm.get_cmap(cmap, len(exps))

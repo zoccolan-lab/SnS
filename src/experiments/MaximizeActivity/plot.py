@@ -14,7 +14,7 @@ from matplotlib import cm, pyplot as plt
 from matplotlib.axes import Axes
 from torchvision.transforms.functional import to_pil_image
 
-#from analysis.utils.misc import load_imagenet
+
 
 from src.snslib.core.generator import DeePSiMGenerator, DeePSiMVariant, Generator, DeePSiMVariant
 from src.snslib.core.utils.misc import default, overwrite_dict

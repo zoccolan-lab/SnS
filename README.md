@@ -62,6 +62,10 @@ If no errors occur, the installation was successful.
 
 # How to generate MEIs (Most Exciting Images) as reference for SnS experiments:
 
+Download the weights of the image generator from [here](https://drive.google.com/drive/folders/1sV54kv5VXvtx4om1c9kBPbdlNuurkGFi) ('fc7.pt' was used for the SnS experiments in the paper). 
+Fill in the `src/experiments/local_settings.json` file with the correct paths to the weights and the output directory (i.e. the directory where all your experiment's results will be saved).
+
+
 In the `src/experiments/MaximizeActivity/run` directory you can find the `multirun_arguments.py` file. This file contains the parameters for the MEI generation. Set the parameters as you want and run the script to get the prompt for generating the MEIs. The prompt will be automatically saved in the `src\experiments\MaximizeActivity\run\multirun_cmd.txt` file. Copy it and paste it on terminal:
 
 ```bash
@@ -69,6 +73,10 @@ cd src/experiments/MaximizeActivity/run
 your_prompt_file
 ```
 Output data will be saved as `data.pkl` file in `out_dir` folder. To unify the references from different runs, you should run the `unify_references.ipynb` notebook.
+
+Add the path to the unified reference file in the `src/experiments/local_settings.json` file.
+
+
 
 # How to record activity from natural images:
 
@@ -82,6 +90,7 @@ To do so, you should follow these steps:
 As for references, neural recordings data from multiple runs should be unified in a single file, to do this, you should:
 1. Fill in the `src\experiments\NeuralRecording\nat_stats_fp.json` file with the paths to the neural recordings data from multiple runs;
 2. Run the `src\experiments\NeuralRecording\nat_stats_dict.ipynb` file to unify the neural recordings data from multiple runs.
+3. Add the path to the unified neural recordings data in the `src/experiments/local_settings.json` file.
 
 # How to run a single SnS experiment:
 
@@ -96,7 +105,7 @@ Run the `src\experiments\Stretch_and_Squeeze\run\run_single_ri.py` file.
 # How to run multiple SnS experiments:
 
 Run the `src\experiments\Stretch_and_Squeeze\run\multirun_arguments.py` file to get the prompt for running the multiple SnS experiments.The prompt will be automatically saved in the `src\experiments\Stretch_and_Squeeze\run\multirun_cmd.txt` file.
-Once you have the prompt, you can run the multiple SnS experiments with the following command:
+Once you copy the prompt, you can run the multiple SnS experiments with the following command:
 
 ```bash
 cd src/experiments/Stretch_and_Squeeze/run
@@ -104,5 +113,21 @@ your_prompt_file
 ```
 
 Note: this section can be used for running the subsampling experiment as well (see comments in the `multirun_arguments.py` file).
+
+
+# Metaexperiments
+
+Once you have your SnS experiments results, you can run the metaexperiments.
+A metaexperiment is a collection of multiple SnS experiments that allows analyses between them. 
+To run a metaexperiment, you should follow these steps:
+
+1. Fill in the `src\snslib\metaexperiment\SnS_multiexp_dirs.json` file with the paths to the SnS experiments results;
+2. Run the `demo/paper_analysis.ipynb` to perform the analyses as in the paper.
+
+
+
+
+
+
 
 

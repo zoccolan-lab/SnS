@@ -16,7 +16,7 @@ from torchvision import transforms
 from scipy.spatial.distance import pdist
 
 from src.experiments.Stretch_and_Squeeze.plots import BMM_scatter_plot
-from metaexperiment.metaexp_functs import get_df_summary
+from snslib.metaexperiment.metaexp_functs import get_df_summary
 from snslib.core.experiment                import ParetoExperimentState, ZdreamExperiment
 from snslib.core.generator                 import Generator, DeePSiMGenerator
 from snslib.core.optimizer                 import CMAESOptimizer, GeneticOptimizer, HybridOptimizer, Optimizer

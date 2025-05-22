@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from snslib.core.utils.misc import get_max_depth
 
-HYPERPARAMS_FP = '/home/ltausani/Documents/GitHub/ZXDREAM/metaexperiment/hyperparams_meta_an.json'
+HYPERPARAMS_FP = 'path/to/hyperparams_meta_an.json'
 def agg_stats(x: pd.Series) -> dict:
     """
     Calculates the mean and standard error of the mean (SEM) for a series of data.

@@ -102,7 +102,7 @@ def distance_analysis_transformations(
     to_tensor = transforms.ToTensor()
 
     # Load stimulus paths and natural recordings metadata (paths always needed for now)
-    SP_PATH = '/home/ltausani/Desktop/Zout/NeuralRecording/neurec_rnet50_vaniGlia_rout_and_lbls/neurec_rnet50_vaniGlia_rout_and_lbls-0/stim_paths.npy'
+    SP_PATH = 'path/to/neuronal_recording/output/stim_paths.npy'
     stim_paths = np.load(SP_PATH, allow_pickle=True)
     # nat_recs = load_pickle(NATURAL_RECORDINGS) # Loaded per unit later
 

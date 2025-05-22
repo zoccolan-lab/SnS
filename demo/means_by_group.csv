@@ -1,0 +1,10 @@
+plot_group_id,participant_accuracy
+Robust_Layer3_conv1_group,0.5637280342879408
+Robust_Layer4_conv7_group,0.47748139489577246
+Robust_MEI_group,0.858434587345043
+Robust_Pixel_space_group,0.6435028248587571
+Standard_Layer3_conv1_group,0.13765213882163035
+Standard_Layer4_conv7_group,0.2588552503409312
+Standard_MEI_group,0.2135503604130138
+Standard_Pixel_Space_group,0.1498871491997088
+natural_group,0.843513611615245

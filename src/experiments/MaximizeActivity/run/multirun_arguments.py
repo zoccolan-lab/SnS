@@ -172,4 +172,4 @@ if __name__ == '__main__':
     args[str(ArgParams          .NumIterations )] = str(ITER)
     args[str(ExperimentArgParams.Template      )] = 'T'
     
-    copy_exec(file=file, args=args ) #fname = fname
+    copy_exec(file=file, args=args ) 

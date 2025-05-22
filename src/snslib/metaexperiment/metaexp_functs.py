@@ -28,7 +28,7 @@ STOPPING_CRITERIA = {
     "adversarial": lambda x,thr: x <= thr
 }
 
-NAT_LABELS = '/home/ltausani/Desktop/Zout/NeuralRecording/neurec_rnet50_robustL2_rout_and_lbls/neurec_rnet50_robustL2_rout_and_lbls-0/labels.npy'
+NAT_LABELS = 'path/to/neural_recs_output/labels.npy'
 
 
 def set_stopping(exp):

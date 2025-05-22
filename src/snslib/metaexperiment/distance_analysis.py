@@ -744,7 +744,7 @@ def main():
     for k in prms.keys():
         if k == "SNS_exp":
             #load the metadata
-            SNS_metadata = SnS_metadata.from_json("/home/ltausani/Documents/GitHub/ZXDREAM/metaexperiment/SnS_multiexp_dirs.json")
+            SNS_metadata = SnS_metadata.from_json("path/to/SnS_multiexp_dirs.json")
             #filter the metadata - TO BE DEBUGGED
             # for c, fltr in prms['SNS_exp']['filtering'].items():
             #     SNS_metadata = SNS_metadata.filter_dfs(column = c, dropna = True, value= fltr if fltr != [] else None)

@@ -1,0 +1,88 @@
+{
+    "resnet50":{
+        "56_linear_01":{
+            "vanilla":{
+                "00_input_01":{
+                    "500":{
+                        "invariance 2.0":"../SnS_Rnet50_st_rout_on_pixsp_invariance",
+                        "adversarial 1.0":"../SnS_Rnet50_st_rout_on_pixsp_adversarial",
+                        "invariance nat refs": "../SnS_Rnet50_st_rout_on_pixsp_invariance_natrefs"
+                    }
+                },
+                "26_conv_25":{
+                    "500":{
+                        "invariance 2.0":"../SnS_Rnet50_st_rout_on_midlevel_invariance",
+                        "invariance nat refs": "../SnS_Rnet50_st_rout_on_midlevel_invariance_natrefs"
+                    }
+                },
+                "52_conv_51":{
+                    "500":{
+                        "invariance 2.0":"../SnS_Rnet50_st_rout_on_highlevel_invariance",
+                        "invariance nat refs": "../SnS_Rnet50_st_rout_on_highlevel_invariance_natrefs"
+                    }
+                }
+            },
+            "robust_l2":{
+                "00_input_01":{
+                    "500":{
+                        "invariance 2.0":"../SnS_Rnet50_r_rout_on_pixsp_invariance",
+                        "adversarial 1.0":"../SnS_Rnet50_r_rout_on_pixsp_adversarial",
+                        "invariance nat refs": "../SnS_Rnet50_r_rout_on_pixsp_invariance_natrefs"
+                    }
+                },
+                "26_conv_25":{
+                    "500":{
+                        "invariance 2.0":"../SnS_Rnet50_r_rout_on_midlevel_invariance",
+                        "inv 2.0 s1000":"../SnS_Rnet50_r_rout_on_midlevel_invariance_s1000",
+                        "inv 2.0 s100":"../SnS_Rnet50_r_rout_on_midlevel_invariance_s100",
+                        "invariance nat refs": "../SnS_Rnet50_r_rout_on_midlevel_invariance_natrefs"
+                    }
+                },
+                "52_conv_51":{
+                    "500":{
+                        "invariance 2.0":"../SnS_Rnet50_r_rout_on_highlevel_invariance",
+                        "inv 2.0 s100":"../SnS_Rnet50_r_rout_on_highlevel_invariance_s100",
+                        "inv 2.0 s1000":"../SnS_Rnet50_r_rout_on_highlevel_invariance_s1000",
+                        "invariance nat refs": "../SnS_Rnet50_r_rout_on_highlevel_invariance_natrefs"
+                    }
+                }
+            }
+    },
+    "26_conv_25":{
+        "vanilla":{
+            "00_input_01":{
+                "500":{
+                    "invariance 2.0":"../SnS_Rnet50_st_midlevel_on_pixsp_invariance"
+
+                }
+
+            }
+        },
+        "robust_l2":{
+            "00_input_01":{
+                "500":{
+                    "invariance 2.0":"../SnS_Rnet50_r_midlevel_on_pixsp_invariance"
+
+                }
+                
+        }
+    }
+    },
+    "52_conv_51":{
+        "robust_l2":{
+            "00_input_01":{
+                "500":{
+                    "invariance 2.0":"../SnS_Rnet50_r_highlevel_on_pixsp_invariance"
+                    }
+                }   
+        },
+        "vanilla":{
+            "00_input_01":{
+                "500":{
+                    "invariance 2.0":"../SnS_Rnet50_st_highlevel_on_pixsp_invariance"
+                }
+            }
+        }
+    }
+}
+}

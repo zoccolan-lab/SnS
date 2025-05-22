@@ -26,13 +26,13 @@
     },
     "XDREAM": {
         "vanilla": {
-            "fp": "/home/ltausani/Desktop/General_reference.pkl",
+            "fp": "path/to/General_reference.pkl",
             "net": "resnet50",
             "ly": "52_conv2d_51",
             "gen": "fc7"
         },
         "l2robust": {
-            "fp": "/home/ltausani/Desktop/General_reference.pkl",
+            "fp": "path/to/General_reference.pkl",
             "net": "resnet50_r",
             "ly": "52_conv2d_51",
             "gen": "fc7"
