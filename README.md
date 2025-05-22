@@ -31,7 +31,7 @@ cd snslib
 Alternatively, using conda:
 
 ```bash
-conda create -n snslib python=3.9
+conda create -n snslib python=3.10
 conda activate snslib
 ```
 
@@ -41,7 +41,7 @@ This project uses `pip` for package management. You can install the project alon
 
 ```bash
 cd /path/where/pyproject.toml/is/located
-pip install .
+pip install -e .
 ```
 
 This command will install the `snslib` package and all its dependencies as defined in `pyproject.toml`.
