@@ -123,7 +123,7 @@ To do so, you should follow these steps:
 0. Set the appropriate params in the `src\experiments\NeuralRecording\args.py` file;
 
 **NOTE**: In `ExperimentArgParams.Dataset.value` set the path to either mini-imagenet dataset (which you should already have downloaded for the MEI generation) or Imagenet dataset (the latter was used in the paper's experiments, to download it go to [here](https://huggingface.co/datasets/ILSVRC/imagenet-1k)).
-1. Run the `src\experiments\NeuralRecording\run_single.py` file to record the activity of the target neurons.
+1. Run the `src\experiments\NeuralRecording\run\run_single.py` file to record the activity of the target neurons.
 
 As for references, neural recordings data from multiple runs should be unified in a single file, to do this, you should:
 
