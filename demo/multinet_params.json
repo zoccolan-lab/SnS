@@ -62,20 +62,7 @@
         },
         "p1": "end"
     },
-    "XDREAM": {
-        "vanilla": {
-            "fp": "path/to/General_reference.pkl",
-            "net": "resnet50",
-            "ly": "158_linear_01",
-            "gen": "fc7"
-        },
-        "l2robust": {
-            "fp": "path/to/General_reference.pkl",
-            "net": "resnet50_r",
-            "ly": "158_linear_01",
-            "gen": "fc7"
-        }
-    },
+    
     "nats": {
         "n_samples": 10,
         "types": [

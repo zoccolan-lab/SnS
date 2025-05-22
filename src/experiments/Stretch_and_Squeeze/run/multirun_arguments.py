@@ -4,21 +4,22 @@ from typing import List, Tuple
 
 import numpy as np
 
-from src.snslib.experiment.utils.args import REFERENCES, ExperimentArgParams
-from src.snslib.experiment.utils.misc import ref_code_recovery
-from src.snslib.core.subject import TorchNetworkSubject
-from src.snslib.core.utils.io_ import load_pickle
-from src.snslib.core.utils.misc       import copy_exec
-from src.snslib.core.utils.parameters import ArgParams
-from src.snslib.experiment.utils.parsing import get_rnd
+from  snslib.experiment.utils.args import REFERENCES, ExperimentArgParams
+from  snslib.experiment.utils.misc import ref_code_recovery
+from  snslib.core.subject import TorchNetworkSubject
+from  snslib.core.utils.io_ import load_pickle
+from  snslib.core.utils.misc       import copy_exec
+from  snslib.core.utils.parameters import ArgParams
+from  snslib.experiment.utils.parsing import get_rnd
 
-
-SPACE_TXT = '../src/experiments/Stretch_and_Squeeze/run/low_spaces.txt'
+# Full path to where the low_spaces.txt file is located
+SPACE_TXT = 'path/to/low_spaces.txt'
 
 # --PARAMETERS--
 TASK = ['invariance'] #['adversarial', 'invariance']
 NAME                = f'your_multirun_name'
 GLOBAL_RSEED        = 50000
+NR_SEEDS            = 10
 ITER                = 500
 OPTIMIZER           = 'cmaes'#'genetic'
 
@@ -63,7 +64,7 @@ if ROBUST_VARIANT:
 else:
     SBJ_LOADER = 'torch_load_pretrained'
     
-RND_SEED            = get_rnd(seed=GLOBAL_RSEED, n_seeds=10, add_parenthesis=False) #n_seeds=10
+RND_SEED            = get_rnd(seed=GLOBAL_RSEED, n_seeds=NR_SEEDS, add_parenthesis=False) #n_seeds=10
 
 
 Task2Sign = {
@@ -210,54 +211,47 @@ def get_SnS_restricted_space_args():
     
     return rand_seeds, rec_score_ly, ref_p, signatures, bounds,nat_thresh
 
-
 if __name__ == '__main__':
     
     args = {}
     
     print('Multiple run: ')
-    print('[1] SnS multi experiment - adversarial task')
-    print('[2] SnS multi experiment - invariance task')
-    print('[3] SnS multi experiment - invariance task with restricted space')
+    print('[1] SnS multi experiment')
+    print('[2] SnS multi experiment - invariance task with restricted space')
     choice = int(input('Choice: '))
     
     match choice:
         
         case 1:
             
-            rand_seeds, rec_score_ly, ref_p, signatures, bounds, nat_thresh = get_mrun_SnS_args()
-            
-            args[str(ArgParams.RandomSeed)]                 = rand_seeds
-            args[str(ExperimentArgParams.RecordingLayers)]  = rec_score_ly
-            args[str(ExperimentArgParams.ScoringLayers)]    = rec_score_ly
-            args[str(ExperimentArgParams.ReferenceInfo)]    = ref_p
-            args[str(ExperimentArgParams.ScoringSignature)] = signatures
-            args[str(ExperimentArgParams.Bounds)]           = bounds
-            args[str(ExperimentArgParams.Nrec_aggregate)]   = nat_thresh
-            
-            args[str(ExperimentArgParams.Within_pareto_order)] = 'random'
-            
-            file = 'run_multi.py'
-
+            if TASK[0] == 'adversarial':
+                rand_seeds, rec_score_ly, ref_p, signatures, bounds, nat_thresh = get_mrun_SnS_args()
+                
+                args[str(ArgParams.RandomSeed)]                 = rand_seeds
+                args[str(ExperimentArgParams.RecordingLayers)]  = rec_score_ly
+                args[str(ExperimentArgParams.ScoringLayers)]    = rec_score_ly
+                args[str(ExperimentArgParams.ReferenceInfo)]    = ref_p
+                args[str(ExperimentArgParams.ScoringSignature)] = signatures
+                args[str(ExperimentArgParams.Bounds)]           = bounds
+                args[str(ExperimentArgParams.Nrec_aggregate)]   = nat_thresh
+                args[str(ExperimentArgParams.Within_pareto_order)] = 'random'
+                file = 'run_multi.py'
+                
+            elif TASK[0] == 'invariance':
+                rand_seeds, rec_score_ly, ref_p, signatures, bounds, nat_thresh = get_mrun_SnS_args()
+                args[str(ArgParams.RandomSeed)]                 = rand_seeds
+                args[str(ExperimentArgParams.RecordingLayers)]  = rec_score_ly
+                args[str(ExperimentArgParams.ScoringLayers)]    = rec_score_ly
+                args[str(ExperimentArgParams.ReferenceInfo)]    = ref_p
+                args[str(ExperimentArgParams.ScoringSignature)] = signatures
+                args[str(ExperimentArgParams.Bounds)]           = bounds
+                args[str(ExperimentArgParams.Nrec_aggregate)]   = nat_thresh
+                
+                args[str(ExperimentArgParams.Within_pareto_order)] = 'onevar'
+                
+                file = 'run_multi_rand_init.py'
+                    
         case 2:
-            
-            rand_seeds, rec_score_ly, ref_p, signatures, bounds, nat_thresh = get_mrun_SnS_args()
-            
-            args[str(ArgParams.RandomSeed)]                 = rand_seeds
-            args[str(ExperimentArgParams.RecordingLayers)]  = rec_score_ly
-            args[str(ExperimentArgParams.ScoringLayers)]    = rec_score_ly
-            args[str(ExperimentArgParams.ReferenceInfo)]    = ref_p
-            args[str(ExperimentArgParams.ScoringSignature)] = signatures
-            args[str(ExperimentArgParams.Bounds)]           = bounds
-            args[str(ExperimentArgParams.Nrec_aggregate)]   = nat_thresh
-            
-            args[str(ExperimentArgParams.Within_pareto_order)] = 'onevar'
-            
-            file = 'run_multi_rand_init.py'
-            
-        
-            
-        case 3:
             rand_seeds, rec_score_ly, ref_p, signatures, bounds, nat_thresh = get_SnS_restricted_space_args()
             
             args[str(ArgParams.RandomSeed)]                 = rand_seeds

@@ -41,7 +41,7 @@ def torch_load(net_sbj: 'TorchNetworkSubject', weights_path: str = '', pretraine
     print(dir(net_sbj._weights))
     net_sbj._preprocessing = net_sbj._weights.transforms() if pretrained else lambda x: x
     
-    #return net_sbj
+ 
     
 def madryLab_robust_load(net_sbj: 'TorchNetworkSubject', weights_path: str, pretrained: bool = False):
     """

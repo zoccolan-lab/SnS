@@ -755,7 +755,7 @@ class ZdreamExperiment(Experiment):
 
         msg = super()._init()
         
-        # NOTE: We need to create a new specif message for Zdream
+        
         msg_ = ZdreamMessage(
             start_time = msg.start_time,
             rec_units  = self.subject.target,
@@ -894,7 +894,7 @@ class MultiExperiment:
             explicitly provided in the experiment configuration.
         :type default_conf: Dict[str, Any]
         '''
-        # TODO: inserire n_checkpoint in modo più organico nel codice 
+        
         self.n_checkpoint = n_checkpoint
         
         # Check that provided search configuration argument share the same 

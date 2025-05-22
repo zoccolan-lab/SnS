@@ -19,7 +19,7 @@ from torchvision.utils import make_grid
 from torchvision.transforms.functional import to_pil_image
 from PIL import Image, ImageDraw, ImageFont
 
-from src.experiments.Stretch_and_Squeeze.plots import avg_spline
+from  experiments.Stretch_and_Squeeze.plots import avg_spline
 from datetime import datetime
 
 
@@ -62,7 +62,7 @@ def natural_sort_key(s):
     return float(numbers[0]) if numbers else float('inf')
 
 
-#TO BE IMPROVED:
+
 
 def metaplot_lines(grouped_stats_df: pd.DataFrame, groups_to_plot: dict[dict]):
     constraints = grouped_stats_df['constraint'].unique()
@@ -262,7 +262,7 @@ def SnS_scatterplot(
       - 'label': str
       - 'repr_net', 'generator', 'experiment': inputs for distance_analysis_transformations
     """
-    from src.snslib.metaexperiment.canonical import distance_analysis_transformations, build_subject_and_generator
+    from  snslib.metaexperiment.canonical import distance_analysis_transformations, build_subject_and_generator
     fig, ax = plt.subplots(figsize=(16, 16))
     # assign colors
     colors = cm.get_cmap(cmap, len(exps))
@@ -287,7 +287,6 @@ def SnS_scatterplot(
         'translation': '#1E90FF',  # dodger blue
         'scaling': '#2E8B57',  # sea green
     }
-    natural_data_plotted = False
     all_params_for_ttype = {k: set() for k in TRANSFORM_COLORS.keys()} # Initialize to collect params
 
     # plot baseline and transformations
@@ -331,15 +330,7 @@ def SnS_scatterplot(
         elif plot_type == 'splines':
             pass
 
-        # plot natural threshold line
-        # compute threshold 
-        if y_norm:
-            nat_series = (df['ref_activ'] - df['nat_thresh']) / df['ref_activ'] * 100
-        else:
-            nat_series = df['nat_thresh']
-        # first value per unit
-        nat_first = df.groupby('high_target').apply(lambda g: nat_series.loc[g.index].iloc[0])
-        ax.axhline(nat_first.mean(), color=v['color'], linestyle='--', linewidth=2.5)
+        
 
     
         if canonical:
@@ -352,7 +343,7 @@ def SnS_scatterplot(
                     repr_net=repr_net,
                     generator=generator,
                     experiment=v,
-                    process_natural_images=False
+                    
                 )
             trans = transform_cache[group_key]
 
@@ -372,12 +363,8 @@ def SnS_scatterplot(
                 avg_ref_x, avg_ref_y = [], []
                 std_ref_x, std_ref_y = [], [] # New: For standard deviations of reference
                 
-                has_natural_data = 'nat_distances' in tres and 'nat_activations' in tres
 
-                if has_natural_data:
-                    avg_nat_x, avg_nat_y = [], []
-                    
-                    std_nat_x, std_nat_y = [], [] # New: For standard deviations of natural
+                
                 
                 for j in range(len(params)):
                     # --- Reference Data ---
@@ -428,50 +415,10 @@ def SnS_scatterplot(
                         avg_ref_x.append(np.nan); avg_ref_y.append(np.nan)
                         std_ref_x.append(np.nan); std_ref_y.append(np.nan)
 
-                    # --- Natural Data ---
-                    if has_natural_data:
-                        nat_xn_j = [tres['nat_distances'][u][j] for u in units if u in tres['nat_distances'] and j < len(tres['nat_distances'][u])]
-                        nat_yn_j = [tres['nat_activations'][u][j] for u in units if u in tres['nat_activations'] and j < len(tres['nat_activations'][u])]
+                    
+                   
 
-                        nat_data_valid_for_j = True
-                        if not nat_xn_j or not nat_yn_j:
-                            nat_data_valid_for_j = False
-                        else:
-                            if y_norm:
-                                temp_yn_norm = []
-                                original_indices_for_yn = [idx for idx, u in enumerate(units) if u in tres['nat_activations'] and j < len(tres['nat_activations'][u])]
-
-                                for original_idx, y_val in zip(original_indices_for_yn, nat_yn_j):
-                                    u = units[original_idx]
-                                    if u in tres['ref_activations'] and id_idx < len(tres['ref_activations'][u]):
-                                        ref_val_at_id = tres['ref_activations'][u][id_idx]
-                                        temp_yn_norm.append((ref_val_at_id - y_val) / ref_val_at_id * 100)
-                                    else:
-                                        temp_yn_norm.append(np.nan)
-                                nat_yn_j = [val for val in temp_yn_norm if not np.isnan(val)]
-                            
-                            if x_norm and lower_ly=='00_input_01':
-                                temp_xn_norm = []
-                                original_indices_for_xn = [idx for idx, u in enumerate(units) if u in tres['nat_distances'] and j < len(tres['nat_distances'][u])]
-                                for original_idx, x_val in zip(original_indices_for_xn, nat_xn_j):
-                                    u = units[original_idx]
-                                    if u in mpd_map:
-                                        temp_xn_norm.append(x_val / mpd_map[u] * 100)
-                                    else:
-                                        temp_xn_norm.append(np.nan)
-                                nat_xn_j = [val for val in temp_xn_norm if not np.isnan(val)]
-
-                            if not nat_xn_j or not nat_yn_j: # Check if empty after normalization
-                                nat_data_valid_for_j = False
                         
-                        if nat_data_valid_for_j:
-                            avg_nat_x.append(np.mean(nat_xn_j))
-                            avg_nat_y.append(np.mean(nat_yn_j))
-                            std_nat_x.append(np.std(nat_xn_j))
-                            std_nat_y.append(np.std(nat_yn_j))
-                        else:
-                            avg_nat_x.append(np.nan); avg_nat_y.append(np.nan)
-                            std_nat_x.append(np.nan); std_nat_y.append(np.nan)
 
 
                 c = TRANSFORM_COLORS[ttype]
@@ -574,8 +521,7 @@ def SnS_scatterplot(
 
     # Create handles and labels for Reference/Natural lines
     s_handles = [Line2D([0],[0], color='gray', linestyle='-', label='Reference')]
-    if natural_data_plotted:
-        s_handles.append(Line2D([0],[0], color='gray', linestyle='--', label='Natural'))
+    
     s_labels = [h.get_label() for h in s_handles]
     
     # Combine all handles and labels in the desired order for a single column legend
@@ -600,25 +546,7 @@ def SnS_scatterplot(
         )
         ax.add_artist(combined_legend)
 
-    # 2. Get handles and labels for the EXPERIMENT legend (from errorbar/scatter calls)
-    # This must be done *after* plotting the experiments but *before* the next legend call
-
-
-
-
-    # Position it below the plot
-    # if exp_handles: # Only create legend if there are labeled elements
-    #     ax.legend(
-    #         exp_handles,
-    #         exp_labels,
-            
-    #         loc='upper center',
-    #         bbox_to_anchor=(0.5, -0.1), # Position below axes (adjust y < 0)
-    #         ncol=min(3, len(exp_handles)), # Adjust columns dynamically or set fixed
-    #         fontsize=32,
-    #         frameon=False
-    #     )
-    #ax.set_title(f"Distance from reference - ending condition: {end_type} - Robust ResNet50", fontsize=20)
+    
     
     ax.set_ylabel("Activation decrement relative to the most exciting image" + (" (%)" if y_norm else ""), fontsize=32)
 

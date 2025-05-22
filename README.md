@@ -28,11 +28,19 @@ cd snslib
 
     (If you are using Git Bash on Windows, use `source venv/Scripts/activate`)
 
+Alternatively, using conda:
+
+```bash
+conda create -n snslib python=3.9
+conda activate snslib
+```
+
 ## 3. Install dependencies:
 
 This project uses `pip` for package management. You can install the project along with its dependencies directly from the `pyproject.toml` file. This is the recommended way if you plan to use the `snslib` package itself:
 
 ```bash
+cd /path/where/pyproject.toml/is/located
 pip install .
 ```
 
@@ -59,42 +67,74 @@ If no errors occur, the installation was successful.
 *   **PyTorch Installation:** The `torch` and `torchvision` packages can sometimes have specific installation needs depending on your operating system and whether you want CUDA support (for GPU acceleration). If you encounter issues, please refer to the official PyTorch installation guide: [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
 *   **robustbench:** This dependency is installed directly from a GitHub repository. Ensure you have `git` installed and accessible in your PATH for this to work correctly.
 *   If you encounter any issues during installation, please double-check that you have Python 3.9+ and `pip` installed and updated.
+*   NOTE: In robustness folder (`robustness/imagenet_models`), the import 'from torchvision.models.utils import load_state_dict_from_url' is not working. Please change all occurencies of this import with 'from torch.hub import load_state_dict_from_url' instead.
+
+
+
+# Local settings and Args:
+In order to start performing your own experiments (MEI generation, Natural recordings,SnS experiments), you should first set the local settings and check the args.
+
+## Local settings:
+
+The local settings are stored in the `src/snslib/experiment/local_settings.json` file. They refer to the main files used in the experiments. In particular, you should specify the following fields:
+1. `out_dir`: the path to the output folder where the results of your experiments will be saved.
+2. `weights`: the path to the folder containing the weights of the image generator.
+3. `dataset`: the path to the folder containing the mini-imagenet dataset. It can be downloaded from [here](https://www.kaggle.com/datasets/arjunashok33/miniimagenet).
+   
+   **NOTE**: Remember to add the `inet_labels.txt` file in the mini-imagenet dataset folder from [here](https://gist.github.com/aaronpolhamus/964a4411c0906315deb9f4a3723aac57#file-map_clsloc-txt)
+4. `references`: the path to the file containing the unified reference.pkl file. 
+5. `custom_weights`: the path to the folder containing the weights of the robust version of the subject network. It can be downloaded from the robustness library [here](https://www.dropbox.com/s/knf4uimlqsi1yz8/imagenet_l2_3_0.pt?dl=0). This should be in a folder called `resnet50` and the path should be the path to the folder containing the `resnet50` folder.
+6. `natural_recordings`: the path to the file containing the unified natural recordings.pkl file.
+   
+For details on how to update references and natural recordings, please refer to the following sections.
+
+## Args:
+
+Args are the parameters used in the experiments. Every experiment has its own args. A detailed description of the args can be found in the `src/snslib/experiment/utils/args.py` file, to which the args of the single experiment refer to.
 
 # How to generate MEIs (Most Exciting Images) as reference for SnS experiments:
 
-Download the weights of the image generator from [here](https://drive.google.com/drive/folders/1sV54kv5VXvtx4om1c9kBPbdlNuurkGFi) ('fc7.pt' was used for the SnS experiments in the paper). 
-Fill in the `src/experiments/local_settings.json` file with the correct paths to the weights and the output directory (i.e. the directory where all your experiment's results will be saved).
+
+Fill in the `src/snslib/experiment/local_settings.json` file with the correct paths to the weights (specify the path to the folder which contains the 'fc7.pt' file).
 
 
-In the `src/experiments/MaximizeActivity/run` directory you can find the `multirun_arguments.py` file. This file contains the parameters for the MEI generation. Set the parameters as you want and run the script to get the prompt for generating the MEIs. The prompt will be automatically saved in the `src\experiments\MaximizeActivity\run\multirun_cmd.txt` file. Copy it and paste it on terminal:
+In the `src/experiments/MaximizeActivity/run` directory you can find the `multirun_arguments.py` file. This file contains the parameters for multiple MEIs generation. Set the parameters following the comments along the script and run the script to get the prompt for generating the MEIs. The prompt will be automatically saved in the `src\experiments\MaximizeActivity\run\multirun_cmd.txt` file. Copy it and paste it on terminal:
 
 ```bash
 cd src/experiments/MaximizeActivity/run
 your_prompt_file
 ```
-Output data will be saved as `data.pkl` file in `out_dir` folder. To unify the references from different runs, you should run the `unify_references.ipynb` notebook.
+Output data will be saved as `data.pkl` file in `out_dir` folder.
 
-Add the path to the unified reference file in the `src/experiments/local_settings.json` file.
+Now, set the path to your reference file (.pkl file) in the `src/snslib/experiment/local_settings.json` file. If you already have a reference file, please indicate its path. If not, just indicate the path where you want the reference.pkl file to be stored.
+
+
+ To unify the references from different runs, you should run the `unify_references.ipynb` notebook.
+
 
 
 
 # How to record activity from natural images:
 
-For the early stopping it is vital to record the activity of the target neurons when they are stimulated by natural images. In particular the training set of Imagenet.
+For the early stopping it is vital to record the activity of the target neurons when they are stimulated by natural images. In particular the training set of Imagenet, or the mini-imagenet dataset.
 To do so, you should follow these steps:
 
-1. Download the Imagenet dataset (e.g. from [here](https://huggingface.co/datasets/ILSVRC/imagenet-1k));
-2. Set the appropriate params in the `src\experiments\NeuralRecording\args.py` file;
-3. Run the `src\experiments\NeuralRecording\run_single.py` file to record the activity of the target neurons.
+
+0. Set the appropriate params in the `src\experiments\NeuralRecording\args.py` file;
+
+**NOTE**: In `ExperimentArgParams.Dataset.value` set the path to either mini-imagenet dataset (which you should already have downloaded for the MEI generation) or Imagenet dataset (the latter was used in the paper's experiments, to download it go to [here](https://huggingface.co/datasets/ILSVRC/imagenet-1k)).
+1. Run the `src\experiments\NeuralRecording\run_single.py` file to record the activity of the target neurons.
 
 As for references, neural recordings data from multiple runs should be unified in a single file, to do this, you should:
-1. Fill in the `src\experiments\NeuralRecording\nat_stats_fp.json` file with the paths to the neural recordings data from multiple runs;
-2. Run the `src\experiments\NeuralRecording\nat_stats_dict.ipynb` file to unify the neural recordings data from multiple runs.
-3. Add the path to the unified neural recordings data in the `src/experiments/local_settings.json` file.
+
+2. Fill in the `src\snslib\experiment\local_settings.json` file with the paths to the unified natural recordings file (if you already have one, please indicate its path. If not, just indicate the path where you want the unified natural recordings file to be stored);
+3. Fill in the `src\experiments\NeuralRecording\nat_stats_fp.json` file with the paths to the neural recordings data from multiple runs;
+4. Run the `src\experiments\NeuralRecording\nat_stats_dict.ipynb` file to unify the neural recordings data from multiple runs.
+5. Add the path to the unified neural recordings data in the `src/snslib/experiment/local_settings.json` file.
 
 # How to run a single SnS experiment:
 
-Set the parameters as you want in the `src\experiments\Stretch_and_Squeeze\args.py` file.If you want to run a SnS experiment for an adversarial task:
+Set the parameters as you want in the `src\experiments\Stretch_and_Squeeze\args.py` file.If you want to run a SnS experiment for an Adversarial task:
 
 Run the `src\experiments\Stretch_and_Squeeze\run\run_single.py` file.
 
@@ -103,6 +143,9 @@ If you want to run a SnS experiment for Invariance task:
 Run the `src\experiments\Stretch_and_Squeeze\run\run_single_ri.py` file.
 
 # How to run multiple SnS experiments:
+
+In the `src\experiments\Stretch_and_Squeeze\run\multirun_arguments.py` file set the path to save subsampling spaces (SPACE_TXT = 'path/to/save/subsampling/low_spaces.txt', in the top
+of the script).
 
 Run the `src\experiments\Stretch_and_Squeeze\run\multirun_arguments.py` file to get the prompt for running the multiple SnS experiments.The prompt will be automatically saved in the `src\experiments\Stretch_and_Squeeze\run\multirun_cmd.txt` file.
 Once you copy the prompt, you can run the multiple SnS experiments with the following command:
@@ -121,6 +164,7 @@ Once you have your SnS experiments results, you can run the metaexperiments.
 A metaexperiment is a collection of multiple SnS experiments that allows analyses between them. 
 To run a metaexperiment, you should follow these steps:
 
+0. set the path to `hyperparams_meta_an.json` file in the `src\snslib\metaexperiment\metaexp.py` file (i.e. the variable HYPERPARAMS_FP at the top of the file) and fill in `hyperparams_meta_an.json` with the required information;
 1. Fill in the `src\snslib\metaexperiment\SnS_multiexp_dirs.json` file with the paths to the SnS experiments results;
 2. Run the `demo/paper_analysis.ipynb` to perform the analyses as in the paper.
 

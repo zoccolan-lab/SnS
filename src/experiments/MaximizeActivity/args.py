@@ -1,5 +1,5 @@
-from src.snslib.experiment.utils.args import DATASET, OUT_DIR, WEIGHTS,REFERENCES, CUSTOM_WEIGHTS,ExperimentArgParams
-from src.snslib.core.utils.parameters import ArgParams, ParamConfig
+from  snslib.experiment.utils.args import DATASET, OUT_DIR, WEIGHTS,REFERENCES, CUSTOM_WEIGHTS,ExperimentArgParams
+from  snslib.core.utils.parameters import ArgParams, ParamConfig
 
 ARGS: ParamConfig = {
 
@@ -15,13 +15,13 @@ ARGS: ParamConfig = {
 
     # Subject
     ExperimentArgParams.NetworkName      .value : "resnet50"          , 
-    ExperimentArgParams.RecordingLayers  .value : "126=[0]"           , 
-    ExperimentArgParams.CustomWeightsPath.value : CUSTOM_WEIGHTS     , # 'path/to/robust/model/weights' ,
-    ExperimentArgParams.CustomWeightsVariant.value : ''              , #'imagenet_l2_3_0.pt''
+    ExperimentArgParams.RecordingLayers  .value : "56=[1]"           , 
+    ExperimentArgParams.CustomWeightsPath.value : CUSTOM_WEIGHTS     , # 'path/to/robust/model/weights' as specified in local_settings.json ,
+    ExperimentArgParams.CustomWeightsVariant.value : ''              , # 'imagenet_l2_3_0.pt'
     ExperimentArgParams.WeightLoadFunction.value : 'torch_load_pretrained' ,
     
     #, Scorer
-    ExperimentArgParams.ScoringLayers    .value : "21=[]"            ,
+    ExperimentArgParams.ScoringLayers    .value : "56=[1]"            ,
     ExperimentArgParams.UnitsReduction   .value : "mean"             ,
     ExperimentArgParams.LayerReduction   .value : "mean"             ,
     ExperimentArgParams.Reference   .value : REFERENCES,

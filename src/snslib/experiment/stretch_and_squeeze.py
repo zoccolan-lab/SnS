@@ -15,7 +15,6 @@ from torchvision.transforms.functional import to_pil_image
 from torchvision import transforms
 from scipy.spatial.distance import pdist
 
-from src.experiments.Stretch_and_Squeeze.plots import BMM_scatter_plot
 from snslib.metaexperiment.metaexp_functs import get_df_summary
 from snslib.core.experiment                import ParetoExperimentState, ZdreamExperiment
 from snslib.core.generator                 import Generator, DeePSiMGenerator
@@ -45,7 +44,7 @@ NAT_STAT_AGGREGATOR = {
 
 class StretchSqueezeMaskExperiment(ZdreamExperiment):
 
-    EXPERIMENT_TITLE = "AdversarialAttackMax"
+    EXPERIMENT_TITLE = "Stretch_and_Squeeze"
 
     # Screen titles for the display
     NAT_IMG_SCREEN = 'Reference'
@@ -468,7 +467,7 @@ class StretchSqueezeMaskExperiment(ZdreamExperiment):
         
         codes, msg = data
         
-        # Aggiungi il codice a quello della reference per generare
+       
         codes_ = codes + self._reference_code
     
         data_ = (codes_, msg)
@@ -549,8 +548,7 @@ class StretchSqueezeMaskExperiment(ZdreamExperiment):
     def _progress_info(self, i: int, msg : ParetoMessage) -> str:
         ''' Add information about the best score and the average score.'''
         
-        # TODO: UPDATE WITH PARETO STATS
-        # Best synthetic scores
+       
         
         layerwise_score = " ".join([f'{k}:{np.mean(v):.1f}' for k,v in self.layer_scores.items()])
         #NOTE: layerwise score for input is the pixel budjet
@@ -726,10 +724,8 @@ class StretchSqueezeExperiment_randinit(StretchSqueezeExperiment):
         
         return codes, msg
     
-#TODO: check why this is different from the recorded image. Is it because of the normalization?    
 def get_best_distance(im_dir):
-    #per calcolare empiricamente la distanza euclidea tra due immagini.
-    #usato per adversarial attacks project @BMM
+    
     def load_myimg(path):
         img = Image.open(path)
         transform = transforms.Compose([
@@ -745,14 +741,12 @@ def get_best_distance(im_dir):
                     if any(s in os.path.basename(imp) for s in ['adversarial', 'synthetic'])}
     
     matrix = np.vstack([t.view(-1).cpu().numpy() for k,t in adv_images.items()])
-    # Calcolare la distanza euclidea tra i due vettori
+   
     distance = pdist(matrix, 'euclidean')[0]
     print(f"Distanza euclidea: {distance}")
     return distance
 
-#TODO: refactor anche l'esperimento AdvAttk originale (evolverne 2 insieme)
-#??? Classe ParetoExperiment ???
-#class AdversarialAttackExperimentEvolvePair(StretchSqueezeMaskExperiment):
+
     
     
 
@@ -814,7 +808,7 @@ class StretchSqueezeLayerMultiExperiment(BaseZdreamMultiExperiment):
         pf1_coords = np.unique(np.vstack(list(msg.Pfront_1.values())), axis=0)
         self._data['p1_front'].append(msg.Pfront_1)
         codes_history = np.stack(msg.codes_history)
-        #TODO: why codes_history length is nr iter +1?
+    
         self._data['p1_codes'].append(codes_history[pf1_coords[:,0]+1, pf1_coords[:,1],:]),
         self._data['layer_scores'].append({k:np.vstack(v) for k,v in msg.layer_scores_gen_history.items()})
         self._data['num_iter'].append(exp._curr_iter)
@@ -822,10 +816,9 @@ class StretchSqueezeLayerMultiExperiment(BaseZdreamMultiExperiment):
         print(f"{len(pf1_coords)} codes saved")
 
     def _finish(self):
-        #TODO: summary of the experiment as .xlsx file?
+        
         super()._finish() 
         df = get_df_summary(self._data, savepath = self.target_dir)
-        #BMM_scatter_plot(df, net_name = df['net_sbj'].unique()[0], savepath = self.target_dir)
 
     
 # --- CHECKPOINT FUNCTIONS ---

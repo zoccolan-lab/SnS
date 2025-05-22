@@ -502,7 +502,6 @@ def distance_analysis_SnS(repr_net: TorchNetworkSubject,
             single_answers[lbl][n] = single_ans
             if len(lbls)- len(is_inv) > 1:
                 is_ref = [i for i, x in enumerate(lbls) if x == 'ref']
-                #acc['nat_refs'][n] = np.sum(np.argmax(states[repr_net.layer_names[-1]][is_ref,:], axis =1) == n_num)/len(is_ref)
                 ac, single_ans = compute_accuracy(logits = states[repr_net.layer_names[-1]][is_ref,:],
                                                     true_class = n_num,
                                                     k = 1,
@@ -745,10 +744,7 @@ def main():
         if k == "SNS_exp":
             #load the metadata
             SNS_metadata = SnS_metadata.from_json("path/to/SnS_multiexp_dirs.json")
-            #filter the metadata - TO BE DEBUGGED
-            # for c, fltr in prms['SNS_exp']['filtering'].items():
-            #     SNS_metadata = SNS_metadata.filter_dfs(column = c, dropna = True, value= fltr if fltr != [] else None)
-            #get the experiments
+            
             SNS_metaexp = SNS_metadata.get_experiments(queries = prms['SNS_exp']['query'])
             
             for k,v in SNS_metaexp.items():

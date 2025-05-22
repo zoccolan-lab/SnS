@@ -88,7 +88,7 @@ class ZdreamMessage(Message):
     params : ParamConfig = field(default_factory=dict)
 
     
-    # --- ZDREAM COMPONENTS ---
+    # ---  COMPONENTS ---
     
     codes_history      : List[Codes] = field(default_factory=list)
     ''' Codes  representing the images in a latent space. '''

@@ -5,7 +5,7 @@ import os
 import json
 import torch
 from collections import defaultdict
-from src.snslib.core.utils.io_ import load_pickle, read_json, save_json
+from  snslib.core.utils.io_ import load_pickle, read_json, save_json
 from functools import partial, reduce
 import torchvision.transforms as T
 from sklearn.model_selection import StratifiedKFold
@@ -14,27 +14,27 @@ from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from matplotlib.lines import Line2D
 from scipy.stats import pearsonr
-from src.snslib.metaexperiment.plots import pad_tensor_lists, vertical_stack_images
+from  snslib.metaexperiment.plots import pad_tensor_lists, vertical_stack_images
 
 
 
 try:
-    from src.snslib.experiment.utils.args import WEIGHTS, CUSTOM_WEIGHTS
+    from  snslib.experiment.utils.args import WEIGHTS, CUSTOM_WEIGHTS # Weights from local_settings.json
 except ImportError:
     print("Warning: experiment.utils.args not found. WEIGHTS and CUSTOM_WEIGHTS might be undefined.")
-    WEIGHTS = "path/to/weights" # Default or placeholder
-    CUSTOM_WEIGHTS = "path/to/custom_weights" # Default or placeholder
+    WEIGHTS = "path/to/weights" 
+    CUSTOM_WEIGHTS = "path/to/custom_weights" 
 
 
 
-from src.snslib.core.generator import DeePSiMGenerator
-from src.snslib.core.subject import TorchNetworkSubject
-from src.snslib.core.utils.probe import RecordingProbe
-from src.snslib.core.utils.torch_net_load_functs import torch_load, madryLab_robust_load, robustBench_load
-from src.snslib.metaexperiment.metaexp import SnS_metadata
-from src.snslib.metaexperiment.distance_analysis import distance_analysis_SnS, distance_analysis_XDREAM, distance_analysis_nat_imgs, distance_plot as original_distance_plot, plot_accuracy_distribution as original_plot_accuracy_distribution
-from src.snslib.metaexperiment.metaexp_functs import nat_percentiles as original_nat_percentiles
-from src.snslib.core.utils.misc import aggregate_df
+from  snslib.core.generator import DeePSiMGenerator
+from  snslib.core.subject import TorchNetworkSubject
+from  snslib.core.utils.probe import RecordingProbe
+from  snslib.core.utils.torch_net_load_functs import torch_load, madryLab_robust_load, robustBench_load
+from  snslib.metaexperiment.metaexp import SnS_metadata
+from  snslib.metaexperiment.distance_analysis import distance_analysis_SnS, distance_analysis_XDREAM, distance_analysis_nat_imgs, distance_plot as original_distance_plot, plot_accuracy_distribution as original_plot_accuracy_distribution
+from  snslib.metaexperiment.metaexp_functs import nat_percentiles as original_nat_percentiles
+from  snslib.core.utils.misc import aggregate_df
 
 
 # --- Utilities for Activation Percentiles Boxplot ---

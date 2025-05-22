@@ -284,7 +284,7 @@ def parse_recording(
             except Exception as e:
                 raise SyntaxError(f'Invalid units specification in {units}: {e}.')
             
-        # TODO add for adjacent random
+       
         elif is_random and 'radj' in units:
             
             try:
@@ -415,7 +415,7 @@ def parse_scoring(
 
         return activation_idx
 
-    # TODO The random scoring with range is still not implemented
+ 
     if 'r' in input_str and ':' in input_str:
         raise NotImplementedError('Random scoring in range not supported yet.')
     
@@ -508,7 +508,7 @@ def parse_scoring(
     return scoring
         
     
-# TODO not here
+
 def get_neurons_target(
         layers:  List[int],
         neurons: List[int],
@@ -592,7 +592,7 @@ def parse_net_loading(input_str: str) -> callable:
     
     return net_loader
 
-# TODO: choose another location?
+
 def get_rnd(
     seed=None,
     n_seeds=10,

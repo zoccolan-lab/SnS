@@ -320,7 +320,7 @@ class MiniImageNet(ImageFolder, ExperimentDataset):
         '''
         
         img, lbl = super().__getitem__(index)
-        # recupera il path originale dall’elenco samples
+       
         img_path = self.samples[index][0]
         
         return {

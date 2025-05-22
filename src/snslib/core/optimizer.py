@@ -330,7 +330,7 @@ class GeneticOptimizer(Optimizer):
         :type temp: float, optional
         '''
         
-        # TODO Parameter domain sanity check
+        
         
         super().__init__(
             pop_size=pop_size,

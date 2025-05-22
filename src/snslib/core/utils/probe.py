@@ -493,7 +493,7 @@ class InfoProbe(SilicoProbe):
         act_scale : float = 1e2,
     ) -> Dict[Tuple[str, str], List[RFBox]]:
         # raise NotImplementedError()
-        # TODO: Figure out how to implement this!
+        
         I = len(self._output)
         for i, ((self.ref, self.source), targ_act) in enumerate(self._output.items()):
             for j, act in enumerate(targ_act[:-1]):                
@@ -503,16 +503,9 @@ class InfoProbe(SilicoProbe):
                 act.backward(retain_graph=True)
             targ_act[-1].backward(retain_graph=False) if i==(I-1) else targ_act[-1].backward(retain_graph=True)
                 
-        #TO DO: it seems that at each act.backward step all the gradients are backpropagated.
-        #therefore we end up with a dict that, for each key, has a replica of its entry n times,
-        #where n is equal to the number of layers onto which the mapping occurs.
-        #I did a quick fix (i.e. taking the first n element of every value, where n is the number of units
-        # considered) that seems to work for now
+       
         return {k: v[:int(targ_act.size(0))] for k,v in self._rf_dict.items()}
-        #return {
-        #    k : [fit_bbox(np.mean(grad[0], axis = 0)) for grad in v]
-        #    for k, v in self._ingrad.items()
-        #}
+       
     
     def clean(self) -> None:
         '''
@@ -639,7 +632,7 @@ class RecordingProbe(SilicoProbe):
         
         # Rearrange data to have common shape [batch_size, num_units] and
         # be formatted using the desired numerical format (saving memory)
-        # TODO: Is this line actually necessary?
+        
         targ_act = rearrange(targ_act.astype(self._format), 'b ... -> b (...)')
         
         # Register the network activations in probe data storage

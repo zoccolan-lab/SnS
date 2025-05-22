@@ -16,12 +16,12 @@ from torchvision.transforms.functional import to_pil_image
 
 
 
-from src.snslib.core.generator import DeePSiMGenerator, DeePSiMVariant, Generator, DeePSiMVariant
-from src.snslib.core.utils.misc import default, overwrite_dict
-from src.snslib.core.utils.logger import Logger, SilentLogger
-from src.snslib.core.utils.dataset import ExperimentDataset
-from src.snslib.core.utils.misc import SEM, default
-from src.snslib.core.utils.types import Codes, Fitness, Stimuli
+from  snslib.core.generator import DeePSiMGenerator, DeePSiMVariant, Generator, DeePSiMVariant
+from  snslib.core.utils.misc import default, overwrite_dict
+from  snslib.core.utils.logger import Logger, SilentLogger
+from  snslib.core.utils.dataset import ExperimentDataset
+from  snslib.core.utils.misc import SEM, default
+from  snslib.core.utils.types import Codes, Fitness, Stimuli
 
 # --- DEFAULT PLOTTING PARAMETERS ----
 
@@ -70,8 +70,7 @@ def subplot_same_lims(axes: NDArray, sel_axs:_ax_selection = 'xy'):
     ylim = [np.min(lims[:,1,:]), np.max(lims[:,1,:])]
     #for every Axis obj (i.e. for every subplot) set the extremes among all subplots
     #depending on the sel_axs indicated (either x, y or both (xy))
-    #NOTE: we could also improve this function by allowing the user to change the
-    #limits just for a subgroup of subplots
+   
     for ax in axes.flatten():
         ax.set_xlim(xlim) if 'x' in sel_axs else None
         ax.set_ylim(ylim) if 'y' in sel_axs else None   
@@ -358,7 +357,7 @@ def plot_scores(
         # Weight the alpha with the average of these probabilities.
         # Weights are the indexes of the generations. The later the generation, 
         # the higher its weight (i.e. the stronger the shade of black).
-        # TODO Is weighting too steep in this way?
+        
         
         alpha_col = np.sum(is_less*range(n_gens)) / np.sum(range(n_gens))
         bin.set_alpha(alpha_col)

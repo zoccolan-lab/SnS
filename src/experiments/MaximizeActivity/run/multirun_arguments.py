@@ -6,18 +6,44 @@ from typing import List, Set, Tuple
 
 import numpy as np
 
-from src.snslib.experiment.utils.misc import ref_code_recovery
-from src.snslib.core.utils.io_ import load_pickle
-from src.snslib.core.utils.misc import copy_exec
-from src.snslib.core.utils.parameters import ArgParams
-from src.snslib.experiment.utils.args import REFERENCES, ExperimentArgParams
-from src.snslib.core.subject import TorchNetworkSubject
+from  snslib.experiment.utils.misc import ref_code_recovery
+from  snslib.core.utils.io_ import load_pickle
+from  snslib.core.utils.misc import copy_exec
+from  snslib.core.utils.parameters import ArgParams
+from  snslib.experiment.utils.args import REFERENCES, ExperimentArgParams
+from  snslib.core.subject import TorchNetworkSubject
 
 
 NAME   = f'your_experiment_name'
 
+# PARAMETERS
+
+# number of iterations
 ITER     = 500
-SAMPLE   =  30
+
+# network architecture, follow torchvision.models nomenclature
+NET             = 'resnet50'
+
+# robust network architecture. If standard network is used, leave empty ''. 
+# If you want to use a robust network, specify 'imagenet_l2_3_0.pt' for robust ResNet50
+ROBUST_VARIANT  = '' 
+
+# deepsim generator variant, leave as is to follow paper experiments
+REF_GEN_VARIANT = ['fc7']
+
+# layer to record activity from. Set to [26] for mid level neurons,
+# [52] for high level neurons, [56] for readout units.
+REF_LAYERS      = [56]
+
+# number of neurons to record activity from (random selection)
+#NOTE : To specify a list of units, you must decomment the variable REF_NEURONS below.
+NUM_NEURONS = 100
+
+# global seed for reproducibility
+GLOBAL_SEED = 31415
+
+# number of seeds for optimization initialization
+N_SEEDS = 4
 
 # --- REFERENCES ---
 def get_rnd(
@@ -73,14 +99,7 @@ def get_rnd(
 
     return list(unique_numbers)
 
-# PARAMETERS
-NET             = 'resnet50'
-ROBUST_VARIANT  = '' #'imagenet_l2_3_0.pt' for robust ResNet50
-REF_GEN_VARIANT = ['fc7']
-REF_LAYERS      = [156]
-NUM_NEURONS = 100
-GLOBAL_SEED = 31415
-N_SEEDS = 4
+
 
 subject = TorchNetworkSubject(
     NET,
@@ -89,9 +108,10 @@ subject = TorchNetworkSubject(
 LNAME = subject.layer_names[REF_LAYERS[0]]
 layer_shape = subject.layer_shapes[REF_LAYERS[0]]
 
-reference_file      = load_pickle(REFERENCES)
+
 net_key = NET+'_r' if ROBUST_VARIANT else NET
 try:
+    reference_file      = load_pickle(REFERENCES)
     refs = ref_code_recovery(reference_file = reference_file, 
                     keys = {'network': net_key, 
                             'gen_var': REF_GEN_VARIANT[0], 

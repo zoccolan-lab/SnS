@@ -96,7 +96,7 @@ class TorchNetworkSubject(InSilicoSubject, nn.Module):
         exclude_layers: List[str] | None = ['relu', 'batchnorm2d', 'gelu', 'permute', 'stochasticdepth', 'identity', 'dropout'],
         device: str | torch.device = device,
         t_net_loading: callable = torch_load,
-        custom_weights_path: str = '' #messa qua ma forse si può trovare dove metterla meglio
+        custom_weights_path: str = ''
     ) -> None:
         '''
         Initialize a subject represented by an artificial neural
@@ -304,9 +304,8 @@ class TorchNetworkSubject(InSilicoSubject, nn.Module):
         :type logger: Logger
         '''
 
-        # TODO: This return only the first RecorderProbe, what if
-        # TODO: more than one were registered?
-        #
+   
+        
 
         # If no probe was provided, use the first registered probe
         probe = default(probe, self.recorder)

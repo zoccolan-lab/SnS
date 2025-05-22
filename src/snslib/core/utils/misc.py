@@ -535,18 +535,16 @@ def get_keys_at_level(d, level=0):
     Returns:
         list: Lista di chiavi al livello specificato
     """
-    # Prima, trova la profondità massima
+
     max_depth = get_max_depth(d)
     
-    # Gestisci indici negativi (come in Python)
+
     if level < 0:
-        level = max_depth + level + 1  # +1 perché max_depth è 0-indexed
-    
-    # Assicurati che level sia valido
+        level = max_depth + level + 1  
+ 
     if level < 0 or level > max_depth:
         return []
     
-    # Funzione interna per ottenere le chiavi al livello specificato
     def _get_keys(d, target_level, current_level=0):
         if current_level == target_level:
             return list(d.keys())

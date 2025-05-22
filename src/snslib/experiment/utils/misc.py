@@ -17,13 +17,13 @@ def in_notebook():
     try:
         shell = get_ipython().__class__.__name__
         if shell == 'ZMQInteractiveShell':
-            return True   # Eseguito in un Jupyter Notebook
+            return True   
         elif shell == 'TerminalInteractiveShell':
-            return False  # Eseguito in un terminale IPython
+            return False 
         else:
-            return False  # Altro ambiente
+            return False 
     except NameError:
-        return False      # Non eseguito in IPython
+        return False     
 # --- SINGLE RUN --- 
 
 def param_from_str(name: str) -> ArgParam:
@@ -81,34 +81,35 @@ def run_multi(
     exp_type       : Type[Experiment],
     multi_exp_type : Type[MultiExperiment],
 ):       
-    # Pre-parser solo per controllare se c'è un file
+
     pre_parser = argparse.ArgumentParser()
     pre_parser.add_argument('--cmd2exec', type=str)
     
-    # Ignora errori per argomenti sconosciuti
+
     initial_args, _ = pre_parser.parse_known_args()
     if initial_args.cmd2exec and initial_args.cmd2exec.endswith('.txt'):
-        # Legge gli argomenti dal file
+       
         with open(initial_args.cmd2exec, 'r') as f:
             import shlex
             args_list = shlex.split(f.read().strip())
-        # Ora usa il parser normale con gli argomenti dal file
+      
         parser = ArgParams.get_parser(args=list(args_conf.keys()), multirun=True)
-        #exclude the python commands
+       
         cmd_conf = vars(parser.parse_args(args_list[2:]))
     else:
-        # Comportamento originale
+       
         parser = ArgParams.get_parser(args=list(args_conf.keys()), multirun=True)
         cmd_conf = vars(parser.parse_args())
     
     #ADD PARSING SPACES FROM  low_spaces.txt file
-    with open(SPACE_TXT, 'r') as f: spaces_lines = f.readlines()
-    for key in ['scr_layers', 'rec_layers']:
-        if key not in cmd_conf:
-            continue
-        tasks = cmd_conf[key].split('#')
-        tasks = [re.sub(r's(\d+)', lambda m: spaces_lines[int(m.group(1))].strip(), task) for task in tasks]
-        cmd_conf[key] = '#'.join(tasks)
+    if os.path.exists(SPACE_TXT):
+        with open(SPACE_TXT, 'r') as f: spaces_lines = f.readlines()
+        for key in ['scr_layers', 'rec_layers']:
+            if key not in cmd_conf:
+                continue
+            tasks = cmd_conf[key].split('#')
+            tasks = [re.sub(r's(\d+)', lambda m: spaces_lines[int(m.group(1))].strip(), task) for task in tasks]
+            cmd_conf[key] = '#'.join(tasks)
 
     cmd_conf = {
         param_from_str(arg_name) : value 

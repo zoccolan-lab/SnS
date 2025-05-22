@@ -23,7 +23,7 @@ from snslib.core.utils.misc                import concatenate_images, device
 from snslib.core.utils.parameters          import ArgParams, ParamConfig
 from snslib.core.utils.probe               import RecordingProbe
 from snslib.core.utils.types               import Codes, ScoringUnits, Stimuli, Fitness, States
-from src.experiments.MaximizeActivity.plot import multiexp_lineplot, plot_optimizing_units, plot_scores, plot_scores_by_label, save_best_stimulus_per_variant, save_stimuli_samples
+from  experiments.MaximizeActivity.plot import multiexp_lineplot, plot_optimizing_units, plot_scores, plot_scores_by_label, save_best_stimulus_per_variant, save_stimuli_samples
 from snslib.experiment.utils.args            import ExperimentArgParams
 from snslib.experiment.utils.parsing         import parse_boolean_string, parse_net_loading, parse_recording, parse_scoring
 from snslib.experiment.utils.misc            import BaseZdreamMultiExperiment, make_dir
@@ -387,9 +387,9 @@ class MaximizeActivityExperiment(ZdreamExperiment):
 
         msg = super()._finish(msg)
         
-        #return msg
+        
     
-        # DO YOU WANT TO SAVE ALL THE SHIT BELOW? NOT IN ISCHIAGUALASTIA, LET'S SAVE SOME SPACE
+        
 
         # Close screens if set (or preserve for further experiments using the same screen)
         if self._close_screen: self._logger.close_all_screens()
@@ -417,10 +417,7 @@ class MaximizeActivityExperiment(ZdreamExperiment):
             self._logger.info(f'> Saving {label} image to {out_fp}')
             img.save(out_fp)
         
-        # Saving gif
-        # out_fp = path.join(img_dir, 'evolving_best.gif')
-        # self._logger.info(f'> Saving evolving best stimuli across generations to {out_fp}')
-        # to_gif(image_list=self._gif, out_fp=out_fp)
+     
 
         self._logger.info(msg='')
         
@@ -642,7 +639,7 @@ class SamplesMaximizationMultiExperiment(BaseZdreamMultiExperiment):
         
         super()._init()
         
-        self._data['desc'   ] = 'Scores for multiple optimization for the same neuron' # TODO
+        self._data['desc'   ] = 'Scores for multiple optimization for the same neuron'
         
         self._data['samples'] = defaultdict(list)
 
@@ -973,247 +970,5 @@ class NeuronReferenceMultiExperiment(BaseZdreamMultiExperiment):
         }
         
         super()._finish()
-
-
-
-"""
-
-
-class MaximizeActivityRFMapsExperiment(MaximizeActivityExperiment):
-    '''
-    This class extends the MaximizeActivityExperiment to save the receptive fields of the network.
-    '''
-    
-    def _init(self) -> ZdreamMessage:
-        
-        msg = super()._init()
-        # --- MAGIC METHODS ---
-    
-    def __str__ (self)  -> str: return self.value.name
-    def __repr__(self)  -> str: return str(self)
-        CONV_THRESHOLD = {
-            'alexnet': 15
-        }
-        
-        INPUT = '00_input_01'
-        
-        # Create mock images for receptive field mapping (both forward and backward)
-        #self.nr_imgs4rf = 10
-        mock_inp = torch.randn(1, *self.subject.in_shape[1:], device=device, requires_grad=True)
-        
-        # Get recording layers recording from. 
-        # We will map the scoring neurons on each of them.
-        # We sort the target layers by their depth in ascending order
-        
-        rec_layers = [INPUT] + msg.rec_layers
-        rec_layers = sorted(rec_layers, key=lambda x: int(x.split('_')[0]))
-        
-        # NOTE: Following operations works only if scoring from a single layer 
-        
-        rec_targets: Dict[str, RecordingUnit] = self.subject.target
-        
-        # NOTE: In case of conv layers, scored_units values will be a np.array of shape 3 x n
-        # where each row corresponds to the coordinates of the unit of interest (c x h x w)
-        
-        conv_threshold = CONV_THRESHOLD[self.subject.name]
-        
-        scored_units = {
-            layer : 
-                np.expand_dims(np.array(units), axis=0) 
-                if int(layer.split('_')[0]) > conv_threshold  # check if it not a conv layer 
-                else np.row_stack([rec_targets[layer][i][units] for i in range(len(rec_targets[layer]))]) # type: ignore
-            for layer, units in msg.scr_units.items()
-        }
-
-        
-        # Create the InfoProbe and attach it to the subject
-        mapped_layers   = list(set(rec_layers) - set(scored_units.keys()))
-        backward_target = {ml: scored_units for ml in mapped_layers}
-        
-        probe = InfoProbe(
-            inp_shape=self.subject._inp_shape,
-            rf_method='backward',
-            backward_target=backward_target  # type: ignore
-        )
-
-        # NOTE: For backward receptive field we need to register both
-        #       the forward and backward probe hooks
-        self.subject.register(probe)
-
-        # Expose the subject to the mock input to collect the set
-        # of shapes of the underlying network
-        _ = self.subject(stimuli=mock_inp, raise_no_probe=False, with_grad=True)
-        
-        # Collect the receptive fields from the info probe
-        msg.rf_maps = probe.rec_field
-        
-        # Get rf perimeter on the input
-        # NOTE: they are computed on network input size, that can differ
-        #       from the outputted generated images (therefore, a resizing of rfs is implemented)
-        rf_on_input = msg.rf_maps[(INPUT, msg.scr_layers[-1])]
-
-        # Create a mask for the 2D perimeter of the receptive fields
-        rf_2p_mask = [
-            np.zeros(self.generator.output_dim[-2:], dtype=bool) 
-            for _ in range(len(rf_on_input))
-        ]
-        
-        # Rescale the rf perimeter on the input to the generated image
-        img_side_gen       = self.generator.output_dim[-1]
-        img_side_net_input = self.subject.in_shape[-1]
-        rescale_factor     = img_side_gen / img_side_net_input
-        
-        
-        for i, rf in enumerate(rf_on_input):
-            
-           
-            rf_rescaled = [
-                tuple(
-                    round(c * rescale_factor) 
-                    if round(c * rescale_factor) < img_side_gen 
-                    else (img_side_gen-1) 
-                    for c in coord
-                ) 
-                if idx == 1 or idx == 2
-                else coord
-                for idx, coord in enumerate(rf)
-            ]
-            
-                
-            rf_2p_mask[i][rf_rescaled[1][ 0]:rf_rescaled[1][-1]+1, rf_rescaled[2][0]]                      = True
-            rf_2p_mask[i][rf_rescaled[1][ 0]:rf_rescaled[1][-1]+1, rf_rescaled[2][-1]]                     = True
-            rf_2p_mask[i][rf_rescaled[1][ 0],                      rf_rescaled[2][0]:rf_rescaled[2][-1]+1] = True
-            rf_2p_mask[i][rf_rescaled[1][-1],                      rf_rescaled[2][0]:rf_rescaled[2][-1]+1] = True
-        
-        # Save mask
-        self._rf_2p_mask = rf_2p_mask
-        
-        # Remove the probe from the subject
-        self.subject.remove(probe)
-        
-        return msg
-        
-    def _finish(self, msg: ZdreamMessage):
-        
-        msg = super()._finish(msg)
-        
-        # SAVE VISUAL STIMULI (SYNTHETIC AND NATURAL) with their receptive fields
-
-        # Create image folder
-        img_dir = path.join(self.dir, 'images') # already existing
-
-        # We retrieve the best code from the optimizer
-        # and we use the generator to retrieve the best image
-        best_gen = self.generator(codes=msg.best_code)
-        best_gen = best_gen[0] # remove 1 batch size
-        
-        # Apply mask
-        for rf_mask in self._rf_2p_mask:
-            best_gen[:, :, rf_mask] = np.inf
-        
-        to_save: List[Tuple[Image.Image, str]] = [(to_pil_image(best_gen), 'best synthetic RF')]
-        
-        # If used we retrieve the best natural image
-        if self._use_natural:
-            best_nat = self._best_nat_img
-            
-            for rf_mask in self._rf_2p_mask:
-                best_nat[:, :, rf_mask] = np.inf
-            
-            to_save.append((to_pil_image(best_nat), 'best natural RF'))
-            to_save.append((concatenate_images(img_list=[best_gen, best_nat]), 'best stimuli RF'))
-        
-        # Saving images
-        for img, label in to_save:
-            
-            out_fp = path.join(img_dir, f'{label.replace(" ", "_")}.png')
-            self._logger.info(f'> Saving {label} image to {out_fp}')
-            img.save(out_fp)
-
-#-- RANDOM UNITS SAMPLING ---
-
-#QUA FARE IL SAMPLING DELLE UNITà RANDOMICHE CHE POI POSSONO ESSERE USATE (SCORING) PER IL RECORDING
-
-# Create a on-the-fly network subject to extract all network layer names
-#ASSUMPION: ALL THE EXPERIMENTS SHARE THE SAME NETWORK MODEL (e.g. alexnet)
-net_info: Dict[str, Tuple[int, ...]] = TorchNetworkSubject(network_name=self._search_config[0]['subject']['net_name']).layer_info
-layer_names = list(net_info.keys())
-
-#get all the unique rec layers in the multiexperiment
-all_rec_layers = [(conf['subject']['rec_layers']).split(',') for conf in self._search_config]
-unique_rec_layers = list({string for sublist in all_rec_layers for string in sublist})
-
-for rl in unique_rec_layers:
-    if 'r' in rl: # If random units are recorded (NOTE: FOR NOW IN THIS IF WE EXPECT ONLY CONV LAYERS)
-        #get the shape of the layer of interest
-        layer_idx , units = rl.split('=')
-        shape      = net_info[layer_names[int(layer_idx)]][1:]
-        n_rand, _ = units.split('r'); n_rand = int(n_rand)
-        # Unravel indexes sampled in the overall interval
-        neurons = np.unravel_index(
-            indices=np.random.choice(
-                a = np.prod(shape),
-                size=n_rand,
-                replace=False,
-            ),
-            shape=shape)
-        #convert the sampled neurons into string format
-        neurons_str ='='.join([layer_idx, str([tuple([neurons[c_i][i] for c_i in range(len(neurons))]) 
-                                                    for i in range(len(neurons[0]))] ).replace(',', '') ]) 
-        for config in self._search_config:
-            config['subject']['rec_layers'] = config['subject']['rec_layers'].replace(rl, neurons_str)
-
-#get all the unique score layers in the multiexperiment
-all_score_layers = [(conf['scorer']['scr_layers']).split(',') for conf in self._search_config]
-unique_score_layers = list({layer_names[int(string.split('=')[0])] for sublist in all_score_layers for string in sublist})
-scored_units_dict = {k:[] for k in unique_score_layers}
-
-for config in self._search_config:
-
-    #NOTE: we assume that in maximize activity multiexp you score from
-    #one layer per experiment
-    layer_idx , units = config['scorer']['scr_layers'].split('=')
-    n_rand, _ = units.split('r'); n_rand = int(n_rand)
-    
-    for s in config['subject']['rec_layers'].split(','):
-        l_nr, rec_units = s.split('=')
-        if int(l_nr) == int(layer_idx):
-            break
-    if rec_units.strip()=='[]':
-        #case 1) all units recorded    
-        n_rec = net_info[layer_names[int(layer_idx)]][1:][-1]
-    elif '(' in rec_units:
-        #case 2) convolutional layer -> NEVER all units recorded
-        n_rec = len(rec_units.split(') ('))
-    else:
-        #case 2) linear layer, only some units recorded
-        n_rec = len(rec_units.split(' '))
-    
-    
-    idx_to_score = list(
-        np.random.choice(
-            a=np.arange(0,n_rec), 
-            size=n_rand, 
-            replace=False
-        )
-    )
-    
-    if rec_units.strip()=='[]':
-        scored_units = idx_to_score
-    else:
-        splitter = ') (' if '(' in rec_units else ' '
-        scored_units = [rec_units.strip('[]').split(splitter)[idx] for idx in idx_to_score]
-        if '(' in rec_units:
-            for i,s in enumerate(scored_units):
-                if not s.startswith('('):
-                    scored_units[i] = '('+ scored_units[i]
-                if not s.endswith('('):
-                    scored_units[i] = scored_units[i]+ ')'
-                    
-    config['scorer']['scr_layers'] = '='.join([layer_idx,str(scored_units).replace("'", "").replace(",", "")])
-    scored_units_dict[layer_names[int(layer_idx)]].append(config['scorer']['scr_layers'].split('=')[1])
-"""
-
-
 
 
