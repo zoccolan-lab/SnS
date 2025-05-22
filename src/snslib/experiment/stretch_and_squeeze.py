@@ -18,7 +18,7 @@ from scipy.spatial.distance import pdist
 from snslib.metaexperiment.metaexp_functs import get_df_summary
 from snslib.core.experiment                import ParetoExperimentState, ZdreamExperiment
 from snslib.core.generator                 import Generator, DeePSiMGenerator
-from snslib.core.optimizer                 import CMAESOptimizer, GeneticOptimizer, HybridOptimizer, Optimizer
+from snslib.core.optimizer                 import CMAESOptimizer, GeneticOptimizer, Optimizer
 from snslib.core.scorer                    import Scorer, ParetoReferencePairDistanceScorer, _MetricKind
 from snslib.core.subject                   import InSilicoSubject, TorchNetworkSubject
 from snslib.core.utils.dataset             import ExperimentDataset, MiniImageNet, NaturalStimuliLoader, RandomImageDataset
@@ -278,13 +278,7 @@ class StretchSqueezeMaskExperiment(ZdreamExperiment):
                 allow_clones = True,
                 n_parents    = 4
             )
-        elif PARAM_optim_type == 'hybrid':
-            optim = HybridOptimizer(        
-                    codes_shape     = generator.input_dim,
-                    pop_size        = PARAM_pop_size,
-                    pso_prob        = 0.5,
-                    pso_iterations  = 1,
-                    rnd_seed        = PARAM_rnd_seed)
+        
         else:
             raise ValueError(f'Optimizer type {PARAM_optim_type} not recognized')
             
