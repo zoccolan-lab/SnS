@@ -21,8 +21,8 @@ ARGS: ParamConfig = {
     ExperimentArgParams.NetworkName             .value : 'resnet50',        # resnet50
     ExperimentArgParams.RecordingLayers         .value : "0=[], 56=[1]"  , # 56 resnet50
     ExperimentArgParams.CustomWeightsPath       .value : CUSTOM_WEIGHTS, 
-    ExperimentArgParams.CustomWeightsVariant    .value : '', # 'imagenet_l2_3_0.pt'
-    ExperimentArgParams.WeightLoadFunction.value       : 'torch_load', #torch_load
+    ExperimentArgParams.CustomWeightsVariant    .value : '', # if you want to use the robust resnet50, use 'imagenet_l2_3_0.pt'
+    ExperimentArgParams.WeightLoadFunction.value       : 'torch_load', # if using robust resnet50, use 'madryLab_robust_load'
     
     ExperimentArgParams.Rec_low .value : "",
     ExperimentArgParams.Rec_high .value : "",
