@@ -64,22 +64,22 @@
     "plotting": {
         "mXDREAM - l2robust": {
             "color": "#2bdba6",
-            "linestyle": "--",
+            "linestyle": "-",
             "label": "MEI"
         },
         
         "resnet50#56_linear_01#robust_l2#00_input_01#500#invariance 2.0#VSref": {
-            "color": "#178867",
-            "linestyle": "--",
+            "color": "#22c999",
+            "linestyle": "-.",
             "label": "Pix space"
         },
         "resnet50#56_linear_01#robust_l2#26_conv_25#500#invariance 2.0#VSref": {
             "color": "#178867",
-            "linestyle": "--",
+            "linestyle": ":",
             "label": "Layer3_conv1"
         },
         "resnet50#56_linear_01#robust_l2#52_conv_51#500#invariance 2.0#VSref": {
-            "color": "#178867",
+            "color": "#0c4735",
             "linestyle": "--",
             "label": "Layer4_conv7"
         },

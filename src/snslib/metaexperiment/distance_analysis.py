@@ -487,7 +487,7 @@ def distance_analysis_SnS(repr_net: TorchNetworkSubject,
             ac, single_ans= compute_accuracy(logits = states[repr_net.layer_names[-1]][is_inv,:],
                                                     true_class = n_num,
                                                     k = 1,
-                                                    classes = [int(''.join(ch for ch in u if ch.isdigit())) if isinstance(u, str) else u for u in units])
+                                                    classes = None)#[int(''.join(ch for ch in u if ch.isdigit())) if isinstance(u, str) else u for u in units])
             acc[lbl][n] = ac
             single_answers[lbl][n] = single_ans
             if len(lbls)- len(is_inv) > 1:
@@ -495,7 +495,7 @@ def distance_analysis_SnS(repr_net: TorchNetworkSubject,
                 ac, single_ans = compute_accuracy(logits = states[repr_net.layer_names[-1]][is_ref,:],
                                                     true_class = n_num,
                                                     k = 1,
-                                                    classes = [int(''.join(ch for ch in u if ch.isdigit())) if isinstance(u, str) else u for u in units])
+                                                    classes = None)#[int(''.join(ch for ch in u if ch.isdigit())) if isinstance(u, str) else u for u in units])
                 acc['nat_refs'][n] = ac
                 single_answers['nat_refs'][n] = single_ans
             
@@ -561,7 +561,7 @@ def distance_analysis_XDREAM(repr_net: TorchNetworkSubject,
                                         true_class = n_num,
                                         k = 1,
                                         #classes = [int(''.join(ch for ch in u if ch.isdigit())) for u in available_neurons])      
-                                        classes = classes4classify)
+                                        classes = None)#classes4classify)
             acc[n] = ac
             single_answers[n] = single_ans
             #for each neuron, we should compute the distance between all pairs of references
