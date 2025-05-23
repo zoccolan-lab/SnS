@@ -10,6 +10,8 @@ git clone <snslib-repository-url>
 cd snslib
 ```
 
+For the reviewing process, we provide a zip file containing the code base and the link to a Zenodo anonymized folder containing the useful data to easily run the code (in particular the demo section contains a Jupyter notebook to perform the exact analyses as in the paper).
+
 ## 2. Create and activate a virtual environment:
 
 *   **On macOS and Linux:**
