@@ -178,7 +178,7 @@ To run a metaexperiment, you should follow these steps:
    - Fill in the "robust" with 'imagenet_l2_3_0.pt' if you want to use the robust resnet50, or '' if you want to use the non-robust resnet50;
    - Fill in the "gen" with 'fc7' if you want to use the MEI reference;
    - Fill in the "SNS_exp" with the fields of the queries for  all the multiexps you want to analyze.
-   - The XDREAM section is used to get the XDREAM references.
+   - The XDREAM section is used to get the XDREAM references. In these subfields speficify the path to unified_references.pkl file (i.e. the same of local_settings.json) in the field 'fp.
    - The "plotting" section is used to plot the results with the desired parameters (color, linestyle, label, etc.). Note that the keys of this section should be the same as the keys of the SnS experiments in the "queries" section but with the "#" symbol separating the different fields of the query (e.g. "resnet50#56_linear_01#robust_l2#00_input_01#500#invariance 2.0#VSref").
 2) `hyperparams_meta_an.json`: contains the parameters for the Centroid analysis. You should set:
    - The savepath field with the path to the folder where you want to save the plots;
