@@ -71,20 +71,20 @@ If no errors occur, the installation was successful.
 
 
 
-# Local settings and Args:
-In order to start performing your own experiments (MEI generation, Natural recordings,SnS experiments), you should first set the local settings and check the args.
+# First steps: Local settings and Args:
+In order to start performing your own experiments (MEI generation, Natural recordings,SnS experiments and also metaexperiments), you should first set the local settings and check the args.
 
 ## Local settings:
 
 The local settings are stored in the `src/snslib/experiment/local_settings.json` file. They refer to the main files used in the experiments. In particular, you should specify the following fields:
-1. `out_dir`: the path to the output folder where the results of your experiments will be saved.
-2. `weights`: the path to the folder containing the weights of the image generator.
+1. `out_dir`: the path to the output folder where the results of your experiments will be saved. 
+2. `weights`: the path to the folder containing the weights of the image generator. The fc7 variant is provided on Zenodo in the folder deepsim.
 3. `dataset`: the path to the folder containing the mini-imagenet dataset. It can be downloaded from [here](https://www.kaggle.com/datasets/arjunashok33/miniimagenet).
    
    **NOTE**: Remember to add the `inet_labels.txt` file in the mini-imagenet dataset folder from [here](https://gist.github.com/aaronpolhamus/964a4411c0906315deb9f4a3723aac57#file-map_clsloc-txt)
-4. `references`: the path to the file containing the unified reference.pkl file. If you don't have one yet, fill it in with the path to the folder where you want the reference.pkl file to be stored.
+4. `references`: the path to the file containing the unified reference.pkl file. If you don't have one yet, fill it in with the path to the folder where you want the reference.pkl file to be stored. We uploaded a unified_references.pkl file on Zenodo.
 5. `custom_weights`: the path to the folder containing the weights of the robust version of the subject network. It can be downloaded from the robustness library [here](https://www.dropbox.com/s/knf4uimlqsi1yz8/imagenet_l2_3_0.pt?dl=0). This should be in a folder called `resnet50` and the path should be the path to the folder containing the `resnet50` folder.
-6. `natural_recordings`: the path to the file containing the unified natural recordings.pkl file. If you don't have one yet, fill it in with the path to the folder where you want the natural recordings.pkl file to be stored.
+6. `natural_recordings`: the path to the file containing the unified natural recordings.pkl file. If you don't have one yet, fill it in with the path to the folder where you want the natural recordings.pkl file to be stored. We uploaded a unified_nat_recs.pkl file on Zenodo.
    
 For details on how to update references and natural recordings, please refer to the following sections.
 
@@ -165,8 +165,8 @@ A metaexperiment is a collection of multiple SnS experiments that allows analyse
 To run a metaexperiment, you should follow these steps:
 
 0. set the path to `hyperparams_meta_an.json` file in the `src\snslib\metaexperiment\metaexp.py` file (i.e. the variable HYPERPARAMS_FP at the top of the file) and fill in `hyperparams_meta_an.json` with the required information (NOTE: in nat_rec_fp you should indicate the path to the unified natural recordings file);
-1. Fill in the `src\snslib\metaexperiment\SnS_multiexp_dirs.json` file with the paths to the SnS experiments results;
-2. Add to `src\snslib\metaexperiment\metaexp_functs.py` the path to the Full_inet_labels.npy file provided in the zenodo repository. 
+1. Fill in the `src\snslib\metaexperiment\SnS_multiexp_dirs.json` file with the paths to the SnS experiments results; We provide the SnS experiments used in the paper in the Zenodo repository.
+2. Add to `src\snslib\metaexperiment\metaexp_functs.py` the path to the Full_inet_labels.npy file provided in the Zenodo repository. 
 3. After filling in the required paths, run the `demo/paper_analysis.ipynb` to perform the analyses as in the paper.
 
 **NOTE**: two .json files are important for running analysis in the `demo` folder:
@@ -184,5 +184,7 @@ To run a metaexperiment, you should follow these steps:
    - The "nat_percentiles" field is used to get the natural_recordings.pkl, it should point to the path you set in the local_settings.json file.
    - The "SnS_scatterplot" field is used to get the scatterplot of the SnS experiments, plot_type should be set to "centroid" and end_type should be set to "end" to repeat the analysis of the paper.
 
+# Additional notes:
+The whole code base was tested on a Linux machine (Ubuntu 22.04) and a Nvidia GTX 1080Ti GPU.
 
 
