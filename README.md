@@ -164,14 +164,25 @@ Once you have your SnS experiments results, you can run the metaexperiments.
 A metaexperiment is a collection of multiple SnS experiments that allows analyses between them. 
 To run a metaexperiment, you should follow these steps:
 
-0. set the path to `hyperparams_meta_an.json` file in the `src\snslib\metaexperiment\metaexp.py` file (i.e. the variable HYPERPARAMS_FP at the top of the file) and fill in `hyperparams_meta_an.json` with the required information;
+0. set the path to `hyperparams_meta_an.json` file in the `src\snslib\metaexperiment\metaexp.py` file (i.e. the variable HYPERPARAMS_FP at the top of the file) and fill in `hyperparams_meta_an.json` with the required information (NOTE: in nat_rec_fp you should indicate the path to the unified natural recordings file);
 1. Fill in the `src\snslib\metaexperiment\SnS_multiexp_dirs.json` file with the paths to the SnS experiments results;
-2. Run the `demo/paper_analysis.ipynb` to perform the analyses as in the paper.
+2. Add to `src\snslib\metaexperiment\metaexp_functs.py` the path to the Full_inet_labels.npy file provided in the zenodo repository. 
+3. After filling in the required paths, run the `demo/paper_analysis.ipynb` to perform the analyses as in the paper.
 
-
-
-
-
+**NOTE**: two .json files are important for running analysis in the `demo` folder:
+1) `distance_params.json`: contains the parameters for the distance analysis. You should set: 
+   - your analysis name exp_name;
+   - your observer net ref_net (set net name following pytorch nomenclature, e.g. resnet50);
+   - Fill in the "robust" with 'imagenet_l2_3_0.pt' if you want to use the robust resnet50, or '' if you want to use the non-robust resnet50;
+   - Fill in the "gen" with 'fc7' if you want to use the MEI reference;
+   - Fill in the "SNS_exp" with the fields of the queries for  all the multiexps you want to analyze.
+   - The XDREAM section is used to get the XDREAM references.
+   - The "plotting" section is used to plot the results with the desired parameters (color, linestyle, label, etc.). Note that the keys of this section should be the same as the keys of the SnS experiments in the "queries" section but with the "#" symbol separating the different fields of the query (e.g. "resnet50#56_linear_01#robust_l2#00_input_01#500#invariance 2.0#VSref").
+2) `hyperparams_meta_an.json`: contains the parameters for the Centroid analysis. You should set:
+   - The savepath field with the path to the folder where you want to save the plots;
+   - The plotting field with the parameters for the plotting of the results (e.g. color, marker, label, etc.).
+   - The "nat_percentiles" field is used to get the natural_recordings.pkl, it should point to the path you set in the local_settings.json file.
+   - The "SnS_scatterplot" field is used to get the scatterplot of the SnS experiments, plot_type should be set to "centroid" and end_type should be set to "end" to repeat the analysis of the paper.
 
 
 

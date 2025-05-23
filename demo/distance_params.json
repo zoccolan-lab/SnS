@@ -1,8 +1,8 @@
 {
-    "exp_name": "Target_in_51_std",
+    "exp_name": "example",
     "ref_net": {
-        "net_name": "alexnet",
-        "robust": "",
+        "net_name": "resnet50",
+        "robust": "imagenet_l2_3_0.pt",
         "gen": "fc7"
     },
     "SNS_exp": {
@@ -10,9 +10,25 @@
 
             [
                 "resnet50",
-                "52_conv_51",
-                "vanilla",
+                "56_linear_01",
+                "robust_l2",
                 "00_input_01",
+                "500",
+                "invariance 2.0"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "robust_l2",
+                "26_conv_25",
+                "500",
+                "invariance 2.0"
+            ],
+            [
+                "resnet50",
+                "56_linear_01",
+                "robust_l2",
+                "52_conv_51",
                 "500",
                 "invariance 2.0"
             ]
@@ -26,15 +42,15 @@
     },
     "XDREAM": {
         "vanilla": {
-            "fp": "path/to/General_reference.pkl",
+            "fp": "path/to/unified_references.pkl",
             "net": "resnet50",
-            "ly": "52_conv2d_51",
+            "ly": "158_linear_01",
             "gen": "fc7"
         },
         "l2robust": {
-            "fp": "path/to/General_reference.pkl",
+            "fp": "path/to/unified_references.pkl",
             "net": "resnet50_r",
-            "ly": "52_conv2d_51",
+            "ly": "158_linear_01",
             "gen": "fc7"
         }
     },
@@ -46,20 +62,30 @@
         ]
     },
     "plotting": {
-        "mXDREAM - vanilla": {
+        "mXDREAM - l2robust": {
             "color": "#2bdba6",
             "linestyle": "--",
             "label": "MEI"
         },
         
-        "resnet50#52_conv_51#vanilla#00_input_01#500#invariance 2.0#VSref": {
+        "resnet50#56_linear_01#robust_l2#00_input_01#500#invariance 2.0#VSref": {
             "color": "#178867",
             "linestyle": "--",
-            "label": "High Level"
+            "label": "Pix space"
+        },
+        "resnet50#56_linear_01#robust_l2#26_conv_25#500#invariance 2.0#VSref": {
+            "color": "#178867",
+            "linestyle": "--",
+            "label": "Layer3_conv1"
+        },
+        "resnet50#56_linear_01#robust_l2#52_conv_51#500#invariance 2.0#VSref": {
+            "color": "#178867",
+            "linestyle": "--",
+            "label": "Layer4_conv7"
         },
         
         "generate_collages": true,
-        "save_single_imgs": true,
+        "save_single_imgs": false,
         "neurons2view": []
     }
 }

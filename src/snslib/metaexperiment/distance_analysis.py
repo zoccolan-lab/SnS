@@ -95,9 +95,8 @@ def distance_plot(results_df: pd.DataFrame,
     ax.spines['bottom'].set_bounds(xt[0], xt[-1])
     
     # Set y-axis limits and ticks
-    ax.set_ylim(0.75, 2.25)
-    ax.set_yticks(np.arange(0.75, 2.5, 0.25))
-    ax.spines['left'].set_bounds(0.75, 2.25)
+    yt = ax.get_yticks()
+    ax.spines['left'].set_bounds(yt[0], yt[-1])
     processed_map = {}
     
     for key in plotting_params:
@@ -198,21 +197,12 @@ def plot_accuracy_distribution(accuracy_data,
                                dist_params,
                                savepath=None,
                                group_sizes = None):#[1, 4, 4]
-    """
-    Crea un box plot per visualizzare la distribuzione di accuratezza di ogni esperimento.
-
-    Args:
-        accuracy_data (dict): Dizionario con struttura {nome_esperimento: {unit: accuracy_value, ...}, ...}.
-        dist_params (dict): Dizionario con i parametri di plotting (colori, stili, ecc.).
-        savepath (str|None): Percorso dove salvare il plot, se specificato.
-
-    Returns:
-        None
-    """
+   
     plot_data = []
     labels = []
     colors = []
 
+    accuracy_data = {k: v for k,v in accuracy_data.items() if v} # exclude empty values if any.
     common_keys = set.intersection(*[set(subdict.keys()) for subdict in accuracy_data.values()])
     accuracy_data = {key: {subkey: value[subkey] for subkey in common_keys} for key, value in accuracy_data.items()}
 
@@ -493,7 +483,7 @@ def distance_analysis_SnS(repr_net: TorchNetworkSubject,
                                         state_labes = lbls,
                                         aggregator_stat = organize_distances_SnS)
         is_inv = [i for i, x in enumerate(lbls) if x != 'ref']
-        if len(units[0].split(','))==1:#acc[lbl][n] = np.sum(np.argmax(states[repr_net.layer_names[-1]][is_inv,:], axis =1) == n_num)/len(is_inv)
+        if len(n.split(','))==1:#acc[lbl][n] = np.sum(np.argmax(states[repr_net.layer_names[-1]][is_inv,:], axis =1) == n_num)/len(is_inv)
             ac, single_ans= compute_accuracy(logits = states[repr_net.layer_names[-1]][is_inv,:],
                                                     true_class = n_num,
                                                     k = 1,
